@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About SparkSol | Restaurant Technology Built by Restaurant People | Bangalore</title>
+    <meta name="description" content="SparkSol was born from running two restaurants in Bangalore. Every solution we offer is something we built, tested, and use daily at our own outlets.">
+    <link rel="canonical" href="https://sparksol.in/about.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--amber:#C05621;--amber-light:#FCF2ED;--amber-dark:#9A4218;--dark:#121219;--g700:#36363F;--g500:#6B6B75;--g400:#8E8E99;--g100:#F1F1F3;--bg-warm:#FDFBF8;--white:#FFF;--green:#228B54;--green-light:#E8F7EE;--green-dark:#1A6B40;--r:12px;--rs:8px;--sh:0 4px 24px rgba(0,0,0,0.06);--t:0.25s ease}
+        body{font-family:'Inter',system-ui,sans-serif;color:var(--dark);line-height:1.6;background:var(--white);-webkit-font-smoothing:antialiased}
+        a{color:var(--amber);text-decoration:none}.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+        nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,0,0,0.06);height:64px}
+        .nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1140px;margin:0 auto;padding:0 24px;height:64px}
+        .nav-logo{font-size:19px;font-weight:800;color:var(--dark);display:flex;align-items:center;gap:7px}.nav-logo svg{width:24px;height:24px}
+        .nav-links{display:flex;gap:28px;align-items:center}.nav-links a{color:var(--g500);font-size:14px;font-weight:500}.nav-links a.active{color:var(--dark);font-weight:600}
+        .nav-cta{background:var(--amber)!important;color:var(--white)!important;padding:9px 20px;border-radius:var(--rs);font-weight:600;font-size:13px}
+        .hamburger{display:none;background:none;border:none;cursor:pointer}.hamburger svg{width:22px;height:22px;stroke:var(--dark);fill:none;stroke-width:2}
+
+        .hero{padding:120px 0 48px;text-align:center}
+        .hero h1{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:16px}
+        .hero p{font-size:16px;color:var(--g500);max-width:600px;margin:0 auto;line-height:1.7}
+
+        .story{padding:48px 0}
+        .story h2{font-size:24px;font-weight:800;margin-bottom:16px;letter-spacing:-0.3px}
+        .story p{font-size:15px;color:var(--g700);line-height:1.8;margin-bottom:16px}
+        .story .highlight{background:var(--amber-light);padding:24px;border-radius:var(--r);border-left:4px solid var(--amber);margin:24px 0}
+        .story .highlight p{margin:0;color:var(--dark);font-weight:500}
+
+        .numbers{padding:48px 0;text-align:center}
+        .num-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px}
+        .num-item .num-val{font-size:36px;font-weight:800;color:var(--amber)}
+        .num-item .num-lbl{font-size:13px;color:var(--g500);margin-top:4px}
+
+        .diff{padding:48px 0}
+        .diff h2{font-size:24px;font-weight:800;margin-bottom:20px}
+        .diff-table{width:100%;border-collapse:collapse}
+        .diff-table th{text-align:left;font-size:12px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:1px;padding:10px 16px;border-bottom:2px solid var(--g100)}
+        .diff-table td{padding:12px 16px;font-size:14px;border-bottom:1px solid var(--g100)}
+        .diff-table td:first-child{color:var(--g500)}
+        .diff-table td:last-child{color:var(--dark);font-weight:500}
+
+        .company{padding:48px 0;text-align:center;color:var(--g400);font-size:13px;line-height:1.8}
+
+        .final{padding:64px 0;background:var(--dark);text-align:center}
+        .final h2{font-size:24px;font-weight:800;color:var(--white);margin-bottom:10px}
+        .final p{font-size:14px;color:var(--g400);max-width:400px;margin:0 auto 24px}
+        .btn-wa{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:var(--white);padding:14px 28px;border-radius:var(--rs);font-size:14px;font-weight:600}.btn-wa svg{width:18px;height:18px;fill:currentColor}
+
+        footer{padding:32px 0;text-align:center;border-top:1px solid var(--g100)}footer p{font-size:11px;color:var(--g400)}
+
+        @media(max-width:768px){.nav-links{display:none}.hamburger{display:block}.num-grid{grid-template-columns:repeat(2,1fr)}}
+    </style>
+</head>
+<body>
+<nav><div class="nav-inner"><a href="/" class="nav-logo"><svg viewBox="0 0 28 28"><polygon points="14,1 17,10.5 26,14 17,17.5 14,27 11,17.5 2,14 11,10.5" fill="#C05621"/><circle cx="20" cy="6" r="2" fill="#B8860B" opacity="0.6"/></svg>SparkSol</a><div class="nav-links" id="navLinks"><a href="/#services">Services</a><a href="/pricing.html">Pricing</a><a href="/case-study.html">Case Studies</a><a href="/about.html" class="active">About</a><a href="https://wa.me/917010426808?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services." class="nav-cta">Talk to Us &rarr;</a></div><button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button></div></nav>
+
+<section class="hero"><div class="container">
+    <h1>Built by restaurant people.<br>For restaurant people.</h1>
+    <p>SparkSol was born from running two restaurants in Bangalore. Every solution we offer is something we built, tested, and use daily at our own outlets.</p>
+</div></section>
+
+<section class="story"><div class="container">
+    <h2>The story</h2>
+    <p>We couldn&rsquo;t find technology that actually worked for our restaurants. So we built it ourselves.</p>
+    <p>We run two restaurants in Bangalore &mdash; <strong>Hamza Express</strong> (biryani and ghee rice) and <strong>Nawabi Chai House</strong> (Irani chai cafe, open 24 hours). Between the two outlets, we built 39 APIs, deployed 609 code updates, and created systems for everything from WhatsApp ordering to kitchen displays to daily profit tracking.</p>
+    <p>When other restaurant owners saw what we built, they asked: &ldquo;Can you set this up for me?&rdquo;</p>
+    <div class="highlight"><p>That&rsquo;s SparkSol. We don&rsquo;t sell software you need to learn. We set up systems that work, hand them over, and support them. You get the results. We handle the technology.</p></div>
+
+    <h2>Why only restaurants and cafes</h2>
+    <p>Not salons. Not gyms. Not retail shops. Just food businesses.</p>
+    <p>Because we ARE a food business. We know what happens during Friday dinner rush. We know that your cook doesn&rsquo;t care about &ldquo;digital transformation.&rdquo; We know that your real problem is cash not matching at end of day, not &ldquo;needing a SaaS platform.&rdquo;</p>
+    <p>Every solution we build comes from a problem we faced ourselves. That&rsquo;s why it works.</p>
+</div></section>
+
+<section class="numbers"><div class="container">
+    <div class="num-grid">
+        <div class="num-item"><div class="num-val">2</div><div class="num-lbl">Restaurants we run</div></div>
+        <div class="num-item"><div class="num-val">609+</div><div class="num-lbl">Code deployments</div></div>
+        <div class="num-item"><div class="num-val">4.8&#9733; &amp; 4.9&#9733;</div><div class="num-lbl">Google ratings</div></div>
+        <div class="num-item"><div class="num-val">313+</div><div class="num-lbl">Google reviews</div></div>
+        <div class="num-item"><div class="num-val">&#8377;0</div><div class="num-lbl">Monthly SaaS fees we pay</div></div>
+    </div>
+</div></section>
+
+<section class="diff"><div class="container">
+    <h2>How we&rsquo;re different</h2>
+    <table class="diff-table">
+        <tr><th>What others do</th><th>What we do</th></tr>
+        <tr><td>Sell you software and leave</td><td>Set it up, train your staff, support it</td></tr>
+        <tr><td>Charge monthly forever</td><td>One-time setup + annual maintenance</td></tr>
+        <tr><td>Work with any industry</td><td>Only restaurants and cafes</td></tr>
+        <tr><td>Talk about technology</td><td>Talk about results</td></tr>
+        <tr><td>Show you a demo</td><td>Show you our live restaurant</td></tr>
+    </table>
+</div></section>
+
+<div class="company"><div class="container">
+    SparkSol Hospitality Private Limited<br>
+    CIN: U74999KA2019PTC122300 &middot; Incorporated March 2019<br>
+    Director: Abdul Khader Nihaf &middot; Bangalore, Karnataka, India
+</div></div>
+
+<section class="final"><div class="container">
+    <h2>Let&rsquo;s talk about your restaurant.</h2>
+    <p>Message us on WhatsApp. No pressure. No follow-up calls you didn&rsquo;t ask for.</p>
+    <a href="https://wa.me/917010426808?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services." class="btn-wa"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.12 1.52 5.855L0 24l6.335-1.652A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.822 0-3.542-.488-5.018-1.393l-.36-.214-3.733.979.996-3.64-.235-.374A9.77 9.77 0 012.182 12 9.818 9.818 0 0112 2.182 9.818 9.818 0 0121.818 12 9.818 9.818 0 0112 21.818z"/></svg>Talk to Us on WhatsApp</a>
+</div></section>
+
+<footer><div class="container"><p>&copy; 2026 SparkSol Hospitality Pvt Ltd &middot; <a href="/">Home</a> &middot; <a href="/pricing.html">Pricing</a> &middot; <a href="/case-study.html">Case Studies</a></p></div></footer>
+</body>
+</html>

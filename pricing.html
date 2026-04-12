@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparkSol Pricing | Restaurant Technology Services | Transparent Pricing</title>
+    <meta name="description" content="Transparent pricing for all restaurant services. Google listing Rs 4,999. WhatsApp ordering Rs 24,999. POS Rs 29,999. No hidden fees. See every service with exact pricing.">
+    <meta name="theme-color" content="#C05621">
+    <link rel="canonical" href="https://sparksol.in/pricing.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--amber:#C05621;--amber-light:#FCF2ED;--amber-dark:#9A4218;--dark:#121219;--g700:#36363F;--g500:#6B6B75;--g400:#8E8E99;--g300:#BDBDC3;--g100:#F1F1F3;--bg-warm:#FDFBF8;--white:#FFF;--green:#228B54;--green-light:#E8F7EE;--green-dark:#1A6B40;--r:12px;--rs:8px;--sh:0 4px 24px rgba(0,0,0,0.06);--t:0.25s ease}
+        body{font-family:'Inter',system-ui,sans-serif;color:var(--dark);line-height:1.6;background:var(--white);-webkit-font-smoothing:antialiased}
+        a{color:var(--amber);text-decoration:none;transition:color var(--t)}a:hover{color:var(--amber-dark)}
+        .container{max-width:1140px;margin:0 auto;padding:0 24px}
+
+        nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(0,0,0,0.06);height:64px}
+        .nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1140px;margin:0 auto;padding:0 24px;height:64px}
+        .nav-logo{font-size:19px;font-weight:800;color:var(--dark);letter-spacing:-0.3px;display:flex;align-items:center;gap:7px}
+        .nav-logo svg{width:24px;height:24px}
+        .nav-links{display:flex;gap:28px;align-items:center}
+        .nav-links a{color:var(--g500);font-size:14px;font-weight:500;transition:color var(--t)}.nav-links a:hover{color:var(--dark)}
+        .nav-links a.active{color:var(--dark);font-weight:600}
+        .nav-cta{background:var(--amber)!important;color:var(--white)!important;padding:9px 20px;border-radius:var(--rs);font-weight:600;font-size:13px;transition:all var(--t)}.nav-cta:hover{background:var(--amber-dark)!important}
+        .hamburger{display:none;background:none;border:none;cursor:pointer}.hamburger svg{width:22px;height:22px;stroke:var(--dark);fill:none;stroke-width:2}
+
+        .hero{padding:110px 0 48px;text-align:center}
+        .hero h1{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-1px;margin-bottom:10px}
+        .hero p{font-size:16px;color:var(--g500);max-width:480px;margin:0 auto}
+
+        .filters{display:flex;gap:8px;justify-content:center;margin-bottom:36px;flex-wrap:wrap;padding:0 24px}
+        .filter-btn{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;border:1px solid var(--g100);background:var(--white);color:var(--g500);cursor:pointer;transition:all var(--t)}
+        .filter-btn:hover,.filter-btn.active{background:var(--amber);color:var(--white);border-color:var(--amber)}
+
+        .pricing-section{margin-bottom:48px}
+        .pricing-section h2{font-size:14px;font-weight:600;color:var(--g400);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--g100)}
+
+        .price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+
+        .price-card{background:var(--white);border:1px solid var(--g100);border-radius:var(--r);padding:24px;transition:all var(--t);position:relative}
+        .price-card:hover{box-shadow:var(--sh);border-color:var(--g300)}
+        .price-card h3{font-size:17px;font-weight:700;margin-bottom:4px}
+        .price-card .pc-desc{font-size:13px;color:var(--g500);margin-bottom:14px;line-height:1.5}
+        .price-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+        .price-amount{font-size:24px;font-weight:800}
+        .price-freq{font-size:12px;color:var(--g500)}
+        .price-tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px}
+        .tag-ot{background:var(--green-light);color:var(--green)}
+        .tag-mo{background:var(--amber-light);color:var(--amber)}
+        .tag-amc{background:#EEF2FF;color:#4F46E5}
+        .pc-includes{margin-bottom:16px}
+        .pc-includes li{font-size:12px;color:var(--g700);padding:4px 0;padding-left:14px;position:relative;list-style:none}
+        .pc-includes li::before{content:'';position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:var(--amber)}
+        .pc-cta{display:block;text-align:center;padding:10px;border-radius:var(--rs);font-size:13px;font-weight:600;transition:all var(--t)}
+        .pc-cta.green{background:var(--green);color:var(--white)}.pc-cta.green:hover{background:var(--green-dark);color:var(--white)}
+        .pc-cta.amber{background:var(--amber);color:var(--white)}.pc-cta.amber:hover{background:var(--amber-dark);color:var(--white)}
+        .pc-cta.outline{border:2px solid var(--amber);color:var(--amber);background:transparent}.pc-cta.outline:hover{background:var(--amber);color:var(--white)}
+
+        .pack-highlight{border:2px solid var(--amber)}
+        .pack-badge{position:absolute;top:-10px;left:20px;background:var(--amber);color:var(--white);font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px}
+
+        .note{text-align:center;font-size:13px;color:var(--g400);margin:40px 0;line-height:1.6}
+        .note a{font-weight:600}
+
+        .final{padding:64px 0;background:var(--dark);text-align:center}
+        .final h2{font-size:clamp(20px,3vw,28px);font-weight:800;color:var(--white);margin-bottom:10px}
+        .final p{font-size:14px;color:var(--g300);max-width:400px;margin:0 auto 24px}
+        .btn-wa{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:var(--white);padding:14px 28px;border-radius:var(--rs);font-size:14px;font-weight:600;transition:all var(--t)}.btn-wa:hover{background:var(--green-dark);color:var(--white)}
+        .btn-wa svg{width:18px;height:18px;fill:currentColor}
+
+        footer{padding:40px 0 24px;border-top:1px solid var(--g100);text-align:center}
+        footer p{font-size:11px;color:var(--g400)}
+
+        .sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--green);padding:10px 20px;text-align:center}
+        .sticky a{color:var(--white);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+        .sticky a svg{width:18px;height:18px;fill:currentColor}
+
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:rgba(255,255,255,0.98);backdrop-filter:blur(16px);padding:20px 24px;border-bottom:1px solid var(--g100);flex-direction:column;gap:14px;box-shadow:var(--sh)}
+            .nav-links.open{display:flex}.hamburger{display:block}
+            .price-grid{grid-template-columns:1fr}
+            .sticky{display:block}body{padding-bottom:50px}
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-inner">
+        <a href="/" class="nav-logo"><svg viewBox="0 0 28 28"><polygon points="14,1 17,10.5 26,14 17,17.5 14,27 11,17.5 2,14 11,10.5" fill="#C05621"/><circle cx="20" cy="6" r="2" fill="#B8860B" opacity="0.6"/></svg>SparkSol</a>
+        <div class="nav-links" id="navLinks">
+            <a href="/#services">Services</a>
+            <a href="/pricing.html" class="active">Pricing</a>
+            <a href="/case-study.html">Case Studies</a>
+            <a href="/about.html">About</a>
+            <a href="https://wa.me/917010426808?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant." class="nav-cta">Talk to Us &rarr;</a>
+        </div>
+        <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="container">
+        <h1>Simple, transparent pricing.</h1>
+        <p>Every service. Every price. No &ldquo;contact us for pricing.&rdquo; Pick what you need.</p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterCards('all')">All</button>
+        <button class="filter-btn" onclick="filterCards('customers')">Get More Customers</button>
+        <button class="filter-btn" onclick="filterCards('operations')">Run Better Operations</button>
+        <button class="filter-btn" onclick="filterCards('hiring')">Hire Faster</button>
+        <button class="filter-btn" onclick="filterCards('packs')">Packs</button>
+    </div>
+
+    <!-- GET MORE CUSTOMERS -->
+    <div class="pricing-section" data-cat="customers">
+        <h2>Get More Customers</h2>
+        <div class="price-grid">
+            <div class="price-card">
+                <h3>Google Maps Listing</h3>
+                <div class="pc-desc">Photos, menu, hours, reviews QR &mdash; done and handed over.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;4,999</span></div><span class="price-tag tag-ot">One-time</span></div>
+                <ul class="pc-includes"><li>30+ food photos uploaded</li><li>Full menu with prices</li><li>Review QR codes (5 standees)</li><li>Done in 5 working days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Google%20Maps%20Listing%20(G1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;4,999</a>
+            </div>
+            <div class="price-card">
+                <h3>Google Presence Management</h3>
+                <div class="pc-desc">Listing + weekly posts + reviews growth + monthly report.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;7,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;4,999/mo</span></div>
+                <ul class="pc-includes"><li>Everything in Maps Listing</li><li>4 Google posts/month</li><li>Review growth system</li><li>Monthly performance report</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Google%20Presence%20Management%20(G2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Google Presence + Ads</h3>
+                <div class="pc-desc">Everything above + Google Search Ads. Limited: 3 per area.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;9,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;9,999/mo</span></div>
+                <ul class="pc-includes"><li>Everything in Presence Mgmt</li><li>Google Ads campaign</li><li>Monthly ads report with ROI</li><li>Ad spend separate (min &#8377;10K/mo)</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Google%20Presence%20%2B%20Ads%20(G3)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Social Media Setup + Photos</h3>
+                <div class="pc-desc">Instagram &amp; Facebook pages + AI food photography (40 dishes).</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span></div><span class="price-tag tag-ot">One-time</span></div>
+                <ul class="pc-includes"><li>IG + FB pages with brand identity</li><li>First 9 posts published</li><li>40 dish photos (AI)</li><li>All assets handed over</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Social%20Media%20Setup%20(S1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;14,999</a>
+            </div>
+            <div class="price-card">
+                <h3>Social Media Management</h3>
+                <div class="pc-desc">Setup + 20 posts/month + stories + DM management.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;12,999/mo</span></div>
+                <ul class="pc-includes"><li>Everything in Setup + Photos</li><li>20 posts/month (IG + FB)</li><li>10 stories/month</li><li>Monthly analytics report</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Social%20Media%20Management%20(S2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Social Media Full Service</h3>
+                <div class="pc-desc">Management + 4 reels/month + IG/FB ads. Limited: 5 per area.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;24,999/mo</span></div>
+                <ul class="pc-includes"><li>Everything in Management</li><li>4 food reels/month</li><li>Instagram &amp; Facebook ads</li><li>Quarterly strategy review</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Social%20Media%20Full%20Service%20(S3)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>WhatsApp Ordering + Booking</h3>
+                <div class="pc-desc">Full ordering bot + payments + table booking + auto-replies.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;24,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;11,999/yr</span></div>
+                <ul class="pc-includes"><li>WABA ordering (50 items)</li><li>Razorpay payment integration</li><li>Table booking flow</li><li>Live in 10 working days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20WhatsApp%20Ordering%20(W1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;24,999</a>
+            </div>
+            <div class="price-card">
+                <h3>WhatsApp Ordering + Marketing</h3>
+                <div class="pc-desc">Ordering + broadcasts + auto follow-ups. Limited: 2 per cuisine per area.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;34,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;7,999/mo</span></div>
+                <ul class="pc-includes"><li>Everything in Ordering</li><li>2 broadcast campaigns/month</li><li>72-hour auto follow-up</li><li>Customer auto-tagging</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20WhatsApp%20Marketing%20(W2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>WhatsApp Complete</h3>
+                <div class="pc-desc">Ordering + marketing + full CRM. Exclusive: 1 per cuisine per 3km.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;49,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;14,999/mo</span></div>
+                <ul class="pc-includes"><li>Everything in Marketing</li><li>Customer tracking dashboard</li><li>4 campaigns/month</li><li>Quarterly strategy call</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20WhatsApp%20Complete%20(W3)%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
+            </div>
+            <div class="price-card">
+                <h3>Single Platform Setup</h3>
+                <div class="pc-desc">Swiggy OR Zomato OR EazyDiner &mdash; registration + menu.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;5,999</span></div><span class="price-tag tag-ot">One-time</span></div>
+                <ul class="pc-includes"><li>Partner registration</li><li>Menu upload + photos</li><li>Category optimization</li><li>7-12 working days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Platform%20Setup%20(D1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;5,999</a>
+            </div>
+            <div class="price-card">
+                <h3>All Platforms + Commission Analysis</h3>
+                <div class="pc-desc">Swiggy + Zomato + EazyDiner + which one makes you most money.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span></div><span class="price-tag tag-ot">One-time</span></div>
+                <ul class="pc-includes"><li>All 3 platforms set up</li><li>Commission analysis report</li><li>Channel profitability ranking</li><li>15 working days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20All%20Platforms%20(D2)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;14,999</a>
+            </div>
+            <div class="price-card">
+                <h3>QR Menu</h3>
+                <div class="pc-desc">Digital menu + QR code + 10 printed acrylic standees. No monthly fee.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;3,999</span></div><span class="price-tag tag-ot">One-time</span></div>
+                <ul class="pc-includes"><li>All items with photos</li><li>Mobile-responsive</li><li>10 printed QR standees</li><li>Done in 3 days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20QR%20Menu%20(WB1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;3,999</a>
+            </div>
+            <div class="price-card">
+                <h3>Restaurant Website</h3>
+                <div class="pc-desc">Full website + QR menu + SEO + analytics. Zero hosting cost.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;19,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;4,999/yr</span></div>
+                <ul class="pc-includes"><li>5 pages + QR menu</li><li>SEO + Google Analytics</li><li>Click-to-WhatsApp buttons</li><li>10 working days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Restaurant%20Website%20(WB2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- OPERATIONS -->
+    <div class="pricing-section" data-cat="operations">
+        <h2>Run Better Operations</h2>
+        <div class="price-grid">
+            <div class="price-card">
+                <h3>Self-Hosted POS</h3>
+                <div class="pc-desc">Own your billing system. No monthly SaaS fees. Your data stays with you.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;29,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;9,999/yr</span></div>
+                <ul class="pc-includes"><li>Odoo 19 POS (you own it)</li><li>100 items configured</li><li>Staff training (2 hours)</li><li>Extra counter: &#8377;4,999 each</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Self-Hosted%20POS%20(P1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Kitchen Display System</h3>
+                <div class="pc-desc">Orders on kitchen TV. No paper KOTs. Zero monthly software cost.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;5,999/yr</span></div>
+                <ul class="pc-includes"><li>KDS on Cloudflare (&#8377;0/mo)</li><li>1 screen configured</li><li>Extra screen: &#8377;4,999</li><li>Requires POS</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Kitchen%20Display%20(K1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Cash Settlement</h3>
+                <div class="pc-desc">Know exactly how much cash each staff should hand over. Every shift.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;19,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;7,999/yr</span></div>
+                <ul class="pc-includes"><li>PIN-gated settlement dashboard</li><li>Shift-wise reconciliation</li><li>Daily PDF + WhatsApp report</li><li>Requires POS</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Cash%20Settlement%20(C1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Cash Settlement + Auto-Matching</h3>
+                <div class="pc-desc">POS vs UPI vs cash &mdash; every rupee matched automatically. Limited availability.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;34,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;11,999/yr</span></div>
+                <ul class="pc-includes"><li>Everything in Settlement</li><li>Three-way auto-reconciliation</li><li>Discrepancy alerts on WhatsApp</li><li>Monthly trend report</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Settlement%20%2B%20Auto-Matching%20(C2)%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
+            </div>
+            <div class="price-card">
+                <h3>Inventory Tracking</h3>
+                <div class="pc-desc">Know what&rsquo;s in stock. Barcode delivery verification. Low-stock alerts.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;19,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;7,999/yr</span></div>
+                <ul class="pc-includes"><li>100 materials configured</li><li>Barcode verification app</li><li>Low-stock WhatsApp alerts</li><li>Requires POS</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Inventory%20Tracking%20(I1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Inventory + Purchasing</h3>
+                <div class="pc-desc">Tracking + consumption mapping + vendor POs + vendor database.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;39,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;14,999/yr</span></div>
+                <ul class="pc-includes"><li>Everything in Tracking</li><li>Product-to-material mapping</li><li>Vendor order system</li><li>Weekly waste report</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Inventory%20%2B%20Purchasing%20(I2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Inventory + Demand Prediction</h3>
+                <div class="pc-desc">Everything above + ML &ldquo;what to buy tomorrow.&rdquo; Limited availability.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;59,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;19,999/yr</span></div>
+                <ul class="pc-includes"><li>Everything in Purchasing</li><li>ML demand prediction</li><li>Suggested purchase quantities</li><li>Needs 30+ days POS data</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Inventory%20%2B%20Prediction%20(I3)%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
+            </div>
+            <div class="price-card">
+                <h3>Daily P&amp;L Dashboard</h3>
+                <div class="pc-desc">Know your profit today. Revenue &minus; costs &minus; expenses. Every day.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;24,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;9,999/yr</span></div>
+                <ul class="pc-includes"><li>Daily profit/loss view</li><li>Top/bottom selling items</li><li>WhatsApp daily summary</li><li>Requires POS + Inventory or Settlement</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Daily%20P%26L%20(O1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Staff Operations Hub</h3>
+                <div class="pc-desc">PIN-gated dashboard. Table management. Captain/waiter system.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;29,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;9,999/yr</span></div>
+                <ul class="pc-includes"><li>Role-based access (PIN)</li><li>Table pipeline tracking</li><li>Shift management</li><li>Mobile app add-on: &#8377;14,999</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Staff%20Hub%20(F1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIRING -->
+    <div class="pricing-section" data-cat="hiring">
+        <h2>Hire Faster</h2>
+        <div class="price-grid">
+            <div class="price-card">
+                <h3>Hiring Campaign</h3>
+                <div class="pc-desc">Job posters + Apna + WorkIndia + Facebook groups. Per campaign.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;6,999</span></div><span class="price-tag tag-ot">Per campaign</span></div>
+                <ul class="pc-includes"><li>2 poster variations</li><li>Multi-platform posting</li><li>20 screened candidates</li><li>7-10 working days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%20need%20a%20Hiring%20Campaign%20(H1)%20for%20my%20restaurant." class="pc-cta green">Start Hiring &mdash; &#8377;6,999</a>
+            </div>
+            <div class="price-card">
+                <h3>Hiring Ongoing</h3>
+                <div class="pc-desc">Continuous sourcing + WhatsApp campaigns + candidate DB. Limited: 2 per area.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span><span class="price-freq">/month</span></div><span class="price-tag tag-mo">Monthly</span></div>
+                <ul class="pc-includes"><li>2 campaigns/month</li><li>WhatsApp hiring blasts</li><li>Candidate database</li><li>Priority: urgent roles in 3-5 days</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20Hiring%20Ongoing%20(H2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PACKS -->
+    <div class="pricing-section" data-cat="packs">
+        <h2>Combined Packs</h2>
+        <div class="price-grid">
+            <div class="price-card">
+                <h3>Starter Pack</h3>
+                <div class="pc-desc">Google + Social + QR Menu + Platform. Get found online.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;24,999</span></div><span class="price-tag tag-ot">One-time</span></div>
+                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save &#8377;5,000</span></div>
+                <ul class="pc-includes"><li>Google Maps Listing</li><li>Social Media Setup + Photos</li><li>QR Menu + standees</li><li>Swiggy or Zomato listing</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20the%20Starter%20Pack%20for%20my%20restaurant." class="pc-cta green">Get Starter Pack</a>
+            </div>
+            <div class="price-card pack-highlight">
+                <div class="pack-badge">Most Popular</div>
+                <h3>Growth Pack</h3>
+                <div class="pc-desc">Full marketing handled. Google + Social + WhatsApp + Platforms + Website.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;69,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;14,999/mo</span></div>
+                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save &#8377;16,000</span></div>
+                <ul class="pc-includes"><li>Google Presence Management</li><li>Social Media Management</li><li>WhatsApp Ordering + Booking</li><li>All Delivery Platforms</li><li>Restaurant Website</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20the%20Growth%20Pack%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>Operations Pack</h3>
+                <div class="pc-desc">POS + Kitchen + Settlement + Inventory + P&amp;L. Your restaurant runs itself.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;1.25L</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;40K/yr</span></div>
+                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save &#8377;34,000</span></div>
+                <ul class="pc-includes"><li>Self-Hosted POS</li><li>Kitchen Display System</li><li>Cash Settlement + Auto-Matching</li><li>Inventory + Purchasing</li><li>Daily P&amp;L Dashboard</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20the%20Operations%20Pack%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+            </div>
+            <div class="price-card">
+                <h3>All-In-One</h3>
+                <div class="pc-desc">We handle everything. You cook food. Qualification required.</div>
+                <div class="price-row"><div><span class="price-amount">&#8377;2.2L</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;15K/mo + &#8377;40K/yr</span></div>
+                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save &#8377;55,000</span></div>
+                <ul class="pc-includes"><li>Everything in Growth Pack</li><li>Everything in Operations Pack</li><li>Staff Operations Hub</li><li>WhatsApp Complete (CRM)</li></ul>
+                <a href="https://wa.me/917010426808?text=Hi%2C%20I%27m%20interested%20in%20the%20All-In-One%20Pack%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="note">
+        All prices exclusive of GST. Hardware (TVs, tablets, printers) is separate &mdash; we recommend, you buy.<br>
+        Need help choosing? <a href="https://wa.me/917010426808?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20services%20for%20my%20restaurant.">Message us on WhatsApp</a> &mdash; we&rsquo;ll recommend the right services.
+    </div>
+</div>
+
+<section class="final">
+    <div class="container">
+        <h2>Every price. On this page. No surprises.</h2>
+        <p>Message us and we&rsquo;ll tell you exactly what you need. No pressure.</p>
+        <a href="https://wa.me/917010426808?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant." class="btn-wa">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.12 1.52 5.855L0 24l6.335-1.652A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.822 0-3.542-.488-5.018-1.393l-.36-.214-3.733.979.996-3.64-.235-.374A9.77 9.77 0 012.182 12 9.818 9.818 0 0112 2.182 9.818 9.818 0 0121.818 12 9.818 9.818 0 0112 21.818z"/></svg>
+            Talk to Us on WhatsApp
+        </a>
+    </div>
+</section>
+
+<footer><div class="container"><p>SparkSol Hospitality Pvt Ltd &middot; CIN: U74999KA2019PTC122300 &middot; Bangalore &middot; <a href="/">Home</a> &middot; <a href="/pricing.html">Pricing</a> &middot; <a href="/about.html">About</a></p></div></footer>
+
+<div class="sticky">
+    <a href="https://wa.me/917010426808?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant.">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.12 1.52 5.855L0 24l6.335-1.652A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.822 0-3.542-.488-5.018-1.393l-.36-.214-3.733.979.996-3.64-.235-.374A9.77 9.77 0 012.182 12 9.818 9.818 0 0112 2.182 9.818 9.818 0 0121.818 12 9.818 9.818 0 0112 21.818z"/></svg>
+        Talk to Us on WhatsApp
+    </a>
+</div>
+
+<script>
+function filterCards(cat) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.pricing-section').forEach(s => {
+        s.style.display = (cat === 'all' || s.dataset.cat === cat) ? '' : 'none';
+    });
+}
+</script>
+
+</body>
+</html>
