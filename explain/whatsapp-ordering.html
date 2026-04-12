@@ -30,14 +30,12 @@
         .step h2{font-size:20px;font-weight:800;margin-bottom:6px}
         .step .desc{font-size:14px;color:var(--g500);margin-bottom:20px}
 
-        /* iPhone 17 Pro frame */
-        .phone{max-width:260px;margin:0 auto;background:#2C2C2E;border-radius:40px;padding:10px;box-shadow:0 20px 60px rgba(0,0,0,0.18),0 0 0 1px rgba(255,255,255,0.08) inset;position:relative}
-        .phone::before{content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#1C1C1E;border-radius:12px;z-index:2}
-        .phone-inner{border-radius:32px;overflow:hidden;background:#000;position:relative}
-        .phone-inner::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:90px;height:28px;background:#000;border-radius:0 0 14px 14px;z-index:1}
+        /* iPhone 17 Pro frame — clean, no overlays blocking content */
+        .phone{max-width:260px;margin:0 auto;background:linear-gradient(145deg,#3A3A3C,#1C1C1E);border-radius:44px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,0.2),0 0 0 1.5px #48484A;position:relative}
+        .phone-inner{border-radius:36px;overflow:hidden;background:#000}
         .phone img{width:100%;display:block}
 
-        .phones-row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+        .phones-row{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
         .phones-row .phone{max-width:220px}
 
         .dash{background:var(--dark);border-radius:var(--r);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
@@ -59,7 +57,7 @@
         .btn-link{display:inline-block;margin-top:10px;color:var(--g300);font-size:12px}
         footer{padding:28px 0;text-align:center;border-top:1px solid var(--g100)}footer p{font-size:11px;color:var(--g400)}
         .sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--green);padding:10px 20px;text-align:center}.sticky a{color:var(--white);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}.sticky a svg{width:16px;height:16px;fill:currentColor}
-        @media(max-width:768px){.nk{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;padding:20px 24px;border-bottom:1px solid var(--g100);flex-direction:column;gap:14px;box-shadow:var(--sh)}.nk.open{display:flex!important}.hb{display:block}.phone{max-width:180px}.phone::before{width:70px;height:20px;top:12px}.phones-row .phone{max-width:160px}.sticky{display:block}body{padding-bottom:50px}}
+        @media(max-width:768px){.nk{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;padding:20px 24px;border-bottom:1px solid var(--g100);flex-direction:column;gap:14px;box-shadow:var(--sh)}.nk.open{display:flex!important}.hb{display:block}.phone{max-width:200px}.phones-row .phone{max-width:160px}.sticky{display:block}body{padding-bottom:50px}}
     </style>
 </head>
 <body>
