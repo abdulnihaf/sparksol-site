@@ -30,11 +30,15 @@
         .step h2{font-size:20px;font-weight:800;margin-bottom:6px}
         .step .desc{font-size:14px;color:var(--g500);margin-bottom:20px}
 
-        .phone{max-width:240px;margin:0 auto;background:#1a1a2e;border-radius:28px;padding:8px;box-shadow:0 16px 48px rgba(0,0,0,0.12)}
-        .phone img{width:100%;border-radius:22px;display:block}
+        /* iPhone 17 Pro frame */
+        .phone{max-width:260px;margin:0 auto;background:#2C2C2E;border-radius:40px;padding:10px;box-shadow:0 20px 60px rgba(0,0,0,0.18),0 0 0 1px rgba(255,255,255,0.08) inset;position:relative}
+        .phone::before{content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#1C1C1E;border-radius:12px;z-index:2}
+        .phone-inner{border-radius:32px;overflow:hidden;background:#000;position:relative}
+        .phone-inner::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:90px;height:28px;background:#000;border-radius:0 0 14px 14px;z-index:1}
+        .phone img{width:100%;display:block}
 
-        .phones-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
-        .phones-row .phone{max-width:200px}
+        .phones-row{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+        .phones-row .phone{max-width:220px}
 
         .dash{background:var(--dark);border-radius:var(--r);overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
         .dash img{width:100%;display:block}
@@ -55,7 +59,7 @@
         .btn-link{display:inline-block;margin-top:10px;color:var(--g300);font-size:12px}
         footer{padding:28px 0;text-align:center;border-top:1px solid var(--g100)}footer p{font-size:11px;color:var(--g400)}
         .sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--green);padding:10px 20px;text-align:center}.sticky a{color:var(--white);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}.sticky a svg{width:16px;height:16px;fill:currentColor}
-        @media(max-width:768px){.nk{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;padding:20px 24px;border-bottom:1px solid var(--g100);flex-direction:column;gap:14px;box-shadow:var(--sh)}.nk.open{display:flex!important}.hb{display:block}.phone{max-width:200px}.phones-row .phone{max-width:160px}.sticky{display:block}body{padding-bottom:50px}}
+        @media(max-width:768px){.nk{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;padding:20px 24px;border-bottom:1px solid var(--g100);flex-direction:column;gap:14px;box-shadow:var(--sh)}.nk.open{display:flex!important}.hb{display:block}.phone{max-width:180px}.phone::before{width:70px;height:20px;top:12px}.phones-row .phone{max-width:160px}.sticky{display:block}body{padding-bottom:50px}}
     </style>
 </head>
 <body>
@@ -76,11 +80,11 @@
         <p class="desc">They find your number on Google, Instagram, your website, or a QR code at the table. They tap it &mdash; WhatsApp opens. They say &ldquo;Hi.&rdquo;</p>
         <div class="phones-row">
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-01-profile.jpg" alt="Hamza Express WhatsApp Business Profile" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-01-profile.jpg" alt="Hamza Express WhatsApp Business Profile" loading="lazy"></div></div>
                 <p class="caption">Your business profile on WhatsApp</p>
             </div>
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-03-greeting.jpg" alt="Customer says Hi, bot replies with greeting" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-03-greeting.jpg" alt="Customer says Hi, bot replies with greeting" loading="lazy"></div></div>
                 <p class="caption">Customer says Hi &mdash; instant reply</p>
             </div>
         </div>
@@ -93,11 +97,11 @@
         <p class="desc">The bot replies with clear options. The customer taps &ldquo;Order &amp; Pickup&rdquo; to browse the menu. Or &ldquo;Book a Table&rdquo; to reserve. No confusion.</p>
         <div class="phones-row">
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-04-options.jpg" alt="WhatsApp menu options — Order, Book Table, Track, Hours" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-04-options.jpg" alt="WhatsApp menu options — Order, Book Table, Track, Hours" loading="lazy"></div></div>
                 <p class="caption">Clear options &mdash; no typing needed</p>
             </div>
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-05-order-start.jpg" alt="Customer taps Order — catalog appears" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-05-order-start.jpg" alt="Customer taps Order — catalog appears" loading="lazy"></div></div>
                 <p class="caption">Taps &ldquo;Order&rdquo; &mdash; your menu appears</p>
             </div>
         </div>
@@ -110,11 +114,11 @@
         <p class="desc">Your full menu shows as a product catalog inside WhatsApp. Categories (Starters, Curries, Biryani), photos of each dish, prices. They tap an item to see details and portion options.</p>
         <div class="phones-row">
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-06-catalog.jpg" alt="Product catalog — Kebabs, Curries with photos and prices" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-06-catalog.jpg" alt="Product catalog — Kebabs, Curries with photos and prices" loading="lazy"></div></div>
                 <p class="caption">Menu with photos &amp; prices</p>
             </div>
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-07-item.jpg" alt="Chicken Kabab item detail with portion selector" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-07-item.jpg" alt="Chicken Kabab item detail with portion selector" loading="lazy"></div></div>
                 <p class="caption">Tap item &mdash; pick portion, add to cart</p>
             </div>
         </div>
@@ -138,11 +142,11 @@
         <p class="desc">The customer gets an order confirmation in the chat with their order number, items, and total. They tap &ldquo;Review and pay&rdquo; to pay via UPI, card, or net banking through Razorpay.</p>
         <div class="phones-row">
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-09-confirmed.jpg" alt="Order confirmed in chat with order number and Review and pay button" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-09-confirmed.jpg" alt="Order confirmed in chat with order number and Review and pay button" loading="lazy"></div></div>
                 <p class="caption">Order confirmed &mdash; tap to pay</p>
             </div>
             <div>
-                <div class="phone"><img src="/assets/screenshots/wa-10-payment.jpg" alt="Order details with Continue to payment button" loading="lazy"></div>
+                <div class="phone"><div class="phone-inner"><img src="/assets/screenshots/wa-10-payment.jpg" alt="Order details with Continue to payment button" loading="lazy"></div></div>
                 <p class="caption">Payment via UPI, card, or net banking</p>
             </div>
         </div>
