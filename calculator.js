@@ -220,12 +220,19 @@ function renderCalc(containerId) {
         html += '<span style="font-size:15px;font-weight:700;color:#C05621">' + val + u.suffix + '</span>';
         html += '</div>';
 
-        // Range slider
-        html += '<input type="range" min="' + u.min + '" max="' + u.max + '" step="' + u.step + '" value="' + val + '" oninput="sparkCalcSlider(\'' + u.id + '\',this.value)" style="width:100%;accent-color:#C05621;height:6px;cursor:pointer">';
-
-        // Labels
-        html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:#8E8E99;margin-top:4px">';
-        html += '<span>' + u.min + '</span><span>' + u.max + '</span>';
+        // Tappable number chips
+        html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">';
+        for (let v = u.min; v <= u.max; v += u.step) {
+          const isActive = v === val;
+          html += '<button onclick="sparkCalcSlider(\'' + u.id + '\',' + v + ')" style="';
+          html += 'min-width:44px;height:40px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;border:none;';
+          if (isActive) {
+            html += 'background:#C05621;color:#fff;box-shadow:0 2px 8px rgba(192,86,33,0.3)';
+          } else {
+            html += 'background:#F1F1F3;color:#36363F';
+          }
+          html += '">' + v + '</button>';
+        }
         html += '</div>';
 
         // Per-unit price with discount
