@@ -76,7 +76,7 @@ const CALC_DATA = {
       { name: "Mixed", desc: "30 AI + 15 real", values: { ai: 30, real: 15, styled: 0 }, addons: [], price: 18000, popular: true },
       { name: "Premium", desc: "20 AI + 10 real + 10 styled", values: { ai: 20, real: 10, styled: 10 }, addons: ["interior"], price: 31000 },
     ],
-    bundleLink: "/services/social-media",
+    bundleLink: "/services/photography",
   },
   hiring: {
     name: "Hiring",
@@ -109,7 +109,7 @@ const CALC_DATA = {
       { name: "Packaging", desc: "3 SKU designs", values: { packaging: 3, menu: 0 }, addons: [], price: 10500 },
       { name: "Full Brand", desc: "3 packaging + 8 menu pages", values: { packaging: 3, menu: 8 }, addons: [], price: 22500, popular: true },
     ],
-    bundleLink: "/pricing",
+    bundleLink: "/services/design",
   },
 };
 
