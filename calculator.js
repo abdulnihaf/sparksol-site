@@ -220,18 +220,20 @@ function renderCalc(containerId) {
         html += '<span style="font-size:15px;font-weight:700;color:#C05621">' + val + u.suffix + '</span>';
         html += '</div>';
 
-        // Tappable number chips
-        html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">';
-        for (let v = u.min; v <= u.max; v += u.step) {
-          const isActive = v === val;
-          html += '<button onclick="sparkCalcSlider(\'' + u.id + '\',' + v + ')" style="';
-          html += 'min-width:44px;height:40px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;border:none;';
-          if (isActive) {
-            html += 'background:#C05621;color:#fff;box-shadow:0 2px 8px rgba(192,86,33,0.3)';
-          } else {
-            html += 'background:#F1F1F3;color:#36363F';
-          }
-          html += '">' + v + '</button>';
+        // Custom styled slider
+        var pctFill = u.max > u.min ? ((val - u.min) / (u.max - u.min) * 100) : 0;
+        html += '<div style="position:relative;margin:16px 0 8px;padding:0 2px">';
+        html += '<input type="range" min="' + u.min + '" max="' + u.max + '" step="' + u.step + '" value="' + val + '" oninput="sparkCalcSlider(\'' + u.id + '\',parseInt(this.value))" class="spark-slider" style="--fill:' + pctFill + '%">';
+        html += '</div>';
+
+        // Step labels below slider
+        html += '<div style="display:flex;justify-content:space-between;font-size:11px;color:#8E8E99;padding:0 2px">';
+        var steps = [];
+        for (var sv = u.min; sv <= u.max; sv += u.step) steps.push(sv);
+        if (steps.length <= 8) {
+          steps.forEach(function(s) { html += '<span style="' + (s === val ? 'color:#C05621;font-weight:700' : '') + '">' + s + '</span>'; });
+        } else {
+          html += '<span>' + u.min + '</span><span>' + Math.round((u.min+u.max)/2) + '</span><span>' + u.max + '</span>';
         }
         html += '</div>';
 
@@ -330,6 +332,23 @@ function renderCalc(containerId) {
 
   render();
 }
+
+// Inject slider CSS once
+(function(){
+  if (document.getElementById('spark-slider-css')) return;
+  var s = document.createElement('style');
+  s.id = 'spark-slider-css';
+  s.textContent = `
+    .spark-slider{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;outline:none;cursor:pointer;background:linear-gradient(to right,#C05621 0%,#C05621 var(--fill,50%),#F1F1F3 var(--fill,50%),#F1F1F3 100%)}
+    .spark-slider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#C05621;border:4px solid #fff;box-shadow:0 2px 8px rgba(192,86,33,0.35);cursor:grab;transition:box-shadow 0.15s,transform 0.15s}
+    .spark-slider::-webkit-slider-thumb:hover{box-shadow:0 4px 16px rgba(192,86,33,0.5);transform:scale(1.1)}
+    .spark-slider::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15);box-shadow:0 4px 20px rgba(192,86,33,0.6)}
+    .spark-slider::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#C05621;border:4px solid #fff;box-shadow:0 2px 8px rgba(192,86,33,0.35);cursor:grab}
+    .spark-slider::-moz-range-track{height:8px;border-radius:4px;background:#F1F1F3}
+    .spark-slider::-moz-range-progress{height:8px;border-radius:4px;background:#C05621}
+  `;
+  document.head.appendChild(s);
+})();
 
 // Auto-init on page load
 document.addEventListener('DOMContentLoaded', function() {
