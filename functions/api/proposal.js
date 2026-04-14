@@ -1,6 +1,7 @@
 // SparkSol Proposal Generator
 // Creates personalized proposals, stores in D1, sends via WhatsApp
 
+import { generateProposalPDF } from './pdf-gen.js';
 const WA_API = 'https://graph.facebook.com/v21.0';
 
 // Service catalog for proposal generation
@@ -75,6 +76,23 @@ export async function onRequest(context) {
   const action = url.searchParams.get('action');
   const { env } = context;
 
+  // GET: Download PDF
+  if (context.request.method === 'GET' && action === 'pdf') {
+    const id = url.searchParams.get('id');
+    if (!id) return new Response('Not found', { status: 404 });
+    const proposal = await env.DB.prepare('SELECT * FROM proposals WHERE id = ?').bind(id).first();
+    if (!proposal) return new Response('Proposal not found', { status: 404 });
+
+    const pdfBytes = generateProposalPDF(proposal);
+    return new Response(pdfBytes, {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="SparkSol-Proposal-${id.toUpperCase()}.pdf"`,
+      }
+    });
+  }
+
   // GET: Render proposal page
   if (context.request.method === 'GET' && action === 'view') {
     const id = url.searchParams.get('id');
@@ -115,10 +133,17 @@ export async function onRequest(context) {
 
     const proposalUrl = `https://sparksol.in/api/proposal?action=view&id=${id}`;
 
-    // Send via WhatsApp
+    // Send PDF via WhatsApp
     if (data.phone) {
       const phone = data.phone.replace(/\D/g, '');
-      await sendWhatsAppProposal(env, phone, data.restaurant_name, service.name, proposalUrl);
+      const fullProposal = {
+        id, restaurant_name: data.restaurant_name, contact_name: data.contact_name,
+        location: data.location || 'Bangalore', service_name: service.name,
+        deliverables: JSON.stringify(service.deliverables), exclusions: JSON.stringify(service.exclusions),
+        setup_price: service.setup, monthly_price: service.monthly, amc_price: service.amc || 0,
+        timeline: service.timeline, created_at: new Date().toISOString(),
+      };
+      await sendWhatsAppProposal(env, phone, data.restaurant_name, service.name, proposalUrl, id, fullProposal);
     }
 
     return new Response(JSON.stringify({ success: true, id, url: proposalUrl }), {
@@ -145,23 +170,74 @@ function generateId() {
   return id;
 }
 
-async function sendWhatsAppProposal(env, phone, restaurantName, serviceName, url) {
+async function sendWhatsAppProposal(env, phone, restaurantName, serviceName, url, proposalId, proposal) {
   try {
-    await fetch(`${WA_API}/${env.WA_PHONE_ID}/messages`, {
+    // Step 1: Generate PDF
+    const pdfBytes = generateProposalPDF(proposal);
+
+    // Step 2: Upload PDF to WhatsApp Media API
+    const formData = new FormData();
+    formData.append('file', new Blob([pdfBytes], { type: 'application/pdf' }), `SparkSol-Proposal-${proposalId.toUpperCase()}.pdf`);
+    formData.append('messaging_product', 'whatsapp');
+    formData.append('type', 'application/pdf');
+
+    const uploadRes = await fetch(`${WA_API}/${env.WA_PHONE_ID}/media`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messaging_product: 'whatsapp', to: phone, type: 'text',
-        text: { body:
-          `📄 *Your SparkSol Proposal*\n\n` +
-          `For: *${restaurantName}*\n` +
-          `Service: *${serviceName}*\n\n` +
-          `View your personalized proposal:\n${url}\n\n` +
-          `This proposal is valid for 30 days. Review the details and schedule a call when you're ready.\n\n` +
-          `Questions? Just reply here.`
-        }
-      })
+      headers: { 'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}` },
+      body: formData
     });
+    const uploadData = await uploadRes.json();
+    const mediaId = uploadData.id;
+
+    if (mediaId) {
+      // Step 3: Send PDF as document message
+      await fetch(`${WA_API}/${env.WA_PHONE_ID}/messages`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp', to: phone, type: 'document',
+          document: {
+            id: mediaId,
+            filename: `SparkSol-Proposal-${proposalId.toUpperCase()}.pdf`,
+            caption: `📄 Your SparkSol Proposal\n\nFor: *${restaurantName}*\nService: *${serviceName}*\n\nValid for 30 days. Review and reply when ready.`
+          }
+        })
+      });
+
+      // Step 4: Send "Schedule a Call" button
+      await fetch(`${WA_API}/${env.WA_PHONE_ID}/messages`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp', to: phone, type: 'interactive',
+          interactive: {
+            type: 'button',
+            body: { text: 'Ready to discuss? Schedule a quick 15-minute call with our team.' },
+            action: {
+              buttons: [
+                { type: 'reply', reply: { id: 'schedule_call', title: '📞 Schedule a Call' } },
+                { type: 'reply', reply: { id: 'ask_question', title: '❓ Ask a Question' } }
+              ]
+            }
+          }
+        })
+      });
+    } else {
+      // Fallback: send as text with PDF download link
+      await fetch(`${WA_API}/${env.WA_PHONE_ID}/messages`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp', to: phone, type: 'text',
+          text: { body:
+            `📄 *Your SparkSol Proposal*\n\n` +
+            `For: *${restaurantName}*\nService: *${serviceName}*\n\n` +
+            `Download your proposal:\n${url.replace('view', 'pdf')}\n\n` +
+            `Valid for 30 days. Reply here to schedule a call.`
+          }
+        })
+      });
+    }
   } catch (e) { console.error('WA send error:', e); }
 }
 
