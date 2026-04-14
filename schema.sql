@@ -34,3 +34,29 @@ CREATE TABLE IF NOT EXISTS notifications (
   read INTEGER DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS proposals (
+  id TEXT PRIMARY KEY,
+  restaurant_name TEXT,
+  contact_name TEXT,
+  phone TEXT,
+  email TEXT,
+  location TEXT,
+  service_id TEXT,
+  service_name TEXT,
+  deliverables TEXT,
+  exclusions TEXT,
+  setup_price INTEGER,
+  monthly_price INTEGER,
+  amc_price INTEGER,
+  timeline TEXT,
+  custom_notes TEXT,
+  status TEXT DEFAULT 'sent',
+  source TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  viewed_at TEXT,
+  call_scheduled_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_proposals_phone ON proposals(phone);
+CREATE INDEX IF NOT EXISTS idx_proposals_status ON proposals(status);
