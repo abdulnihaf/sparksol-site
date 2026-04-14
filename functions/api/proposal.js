@@ -207,34 +207,39 @@ export async function onRequest(context) {
 
   // POST: Create proposal
   if (context.request.method === 'POST' && action === 'create') {
-    const data = await context.request.json();
-    const serviceId = data.service_id;
-    const service = SERVICES[serviceId];
-    if (!service) return new Response(JSON.stringify({ error: 'Invalid service' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    try {
+      const data = await context.request.json();
+      const serviceId = data.service_id;
+      const service = SERVICES[serviceId];
+      if (!service) return new Response(JSON.stringify({ error: 'Invalid service' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
-    const id = generateId();
+      const id = generateId();
 
-    // Store proposal with rich context
-    await env.DB.prepare(`
-      INSERT INTO proposals (id, restaurant_name, contact_name, phone, email, location, service_id, service_name, deliverables, exclusions, setup_price, monthly_price, amc_price, timeline, source, status, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'sent', datetime('now'))
-    `).bind(
-      id, data.restaurant_name, data.contact_name, data.phone, data.email || '', data.location || 'Bangalore',
-      serviceId, service.name, JSON.stringify(service.deliverables), JSON.stringify(service.exclusions),
-      service.setup, service.monthly, service.amc || 0, service.timeline, data.source || 'website'
-    ).run();
+      // Store proposal with rich context
+      await env.DB.prepare(
+        `INSERT INTO proposals (id, restaurant_name, contact_name, phone, email, location, service_id, service_name, deliverables, exclusions, setup_price, monthly_price, amc_price, timeline, source, status, created_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, 'sent', datetime('now'))`
+      ).bind(
+        id, data.restaurant_name || '', data.contact_name || '', data.phone || '', data.email || '', data.location || 'Bangalore',
+        serviceId, service.name, JSON.stringify(service.deliverables), JSON.stringify(service.exclusions),
+        service.setup, service.monthly, service.amc || 0, service.timeline, data.source || 'website'
+      ).run();
 
-    const proposalUrl = `https://sparksol.in/api/proposal?action=view&id=${id}`;
+      const proposalUrl = `https://sparksol.in/api/proposal?action=view&id=${id}`;
 
-    // Send via WhatsApp
-    if (data.phone) {
-      const phone = data.phone.replace(/\D/g, '');
-      await sendWhatsAppProposal(env, phone, data.restaurant_name, data.contact_name, service.name, proposalUrl, id, { ...service, id, restaurant_name: data.restaurant_name, contact_name: data.contact_name, location: data.location, created_at: new Date().toISOString() });
+      // Send via WhatsApp (non-blocking — don't crash if WA fails)
+      if (data.phone) {
+        const phone = data.phone.replace(/\D/g, '');
+        sendWhatsAppProposal(env, phone, data.restaurant_name, data.contact_name, service.name, proposalUrl, id, { ...service, id, restaurant_name: data.restaurant_name, contact_name: data.contact_name, location: data.location, created_at: new Date().toISOString() }).catch(e => console.error('WA error:', e));
+      }
+
+      return new Response(JSON.stringify({ success: true, id, url: proposalUrl }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    } catch (err) {
+      return new Response(JSON.stringify({ error: err.message, stack: err.stack }), {
+        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
     }
-
-    return new Response(JSON.stringify({ success: true, id, url: proposalUrl }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
   }
 
   // GET: List services (for bot and frontend)
