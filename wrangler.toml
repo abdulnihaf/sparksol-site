@@ -4,15 +4,16 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-WHATSAPP_NUMBER = "918008002049"
+WHATSAPP_NUMBER = "917010426808"
 SITE_URL = "https://sparksol.in"
+WA_PHONE_ID = "1028681576998270"
 
 # Secrets (set via: wrangler pages secret put <NAME>)
-# WA_ACCESS_TOKEN       — SparkSol WABA bearer token
-# WA_PHONE_ID           — SparkSol WABA phone number ID
+# WA_ACCESS_TOKEN       — NCH WABA system user token (works with test number)
+# WA_VERIFY_TOKEN       — Webhook verification token
 # DASHBOARD_KEY         — Admin API key for lead dashboard
 
 [[d1_databases]]
 binding = "DB"
 database_name = "sparksol-leads"
-database_id = "TBD"
+database_id = "7938992a-4dd4-442c-bfe6-b16db799d047"
