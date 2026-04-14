@@ -297,9 +297,29 @@ function renderCalc(containerId) {
       html += '</div>';
     }
 
-    // CTA
+    // CTA: Get Proposal + WhatsApp
+    html += '<div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">';
+
+    // Primary: Get Proposal
+    html += '<button onclick="sparkCalcProposal()" style="flex:1;min-width:200px;background:#C05621;color:#fff;padding:14px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all 0.2s">Get Your Proposal →</button>';
+
+    // Secondary: WhatsApp
     const waMsg = encodeURIComponent("Hi, I'd like a custom " + data.name + " plan: " + t.lines.map(l => l.label).join(', ') + ". Monthly total: " + fmt(t.monthly));
-    html += '<a href="https://wa.me/15559090227?text=' + waMsg + '" style="display:block;text-align:center;background:#228B54;color:#fff;padding:14px;border-radius:8px;font-size:14px;font-weight:600;margin-top:16px;text-decoration:none">Talk to Us on WhatsApp →</a>';
+    html += '<a href="https://wa.me/15559090227?text=' + waMsg + '" style="flex:1;min-width:200px;display:block;text-align:center;background:#228B54;color:#fff;padding:14px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none">Chat on WhatsApp</a>';
+
+    html += '</div>';
+
+    // Proposal form (hidden by default)
+    html += '<div id="spark-proposal-form" style="display:none;background:#F9F9FA;border:1px solid #F1F1F3;border-radius:12px;padding:24px;margin-top:16px">';
+    html += '<div style="font-size:16px;font-weight:700;margin-bottom:4px">Get your personalized proposal</div>';
+    html += '<div style="font-size:13px;color:#6B6B75;margin-bottom:16px">We\'ll send it to your WhatsApp and email within seconds.</div>';
+    html += '<input id="sp-name" placeholder="Your name" style="width:100%;padding:10px 14px;border:1px solid #F1F1F3;border-radius:8px;font-size:14px;margin-bottom:8px;font-family:Inter,sans-serif">';
+    html += '<input id="sp-restaurant" placeholder="Restaurant / Cafe name" style="width:100%;padding:10px 14px;border:1px solid #F1F1F3;border-radius:8px;font-size:14px;margin-bottom:8px;font-family:Inter,sans-serif">';
+    html += '<input id="sp-phone" placeholder="WhatsApp number" type="tel" style="width:100%;padding:10px 14px;border:1px solid #F1F1F3;border-radius:8px;font-size:14px;margin-bottom:8px;font-family:Inter,sans-serif">';
+    html += '<input id="sp-email" placeholder="Email (optional)" type="email" style="width:100%;padding:10px 14px;border:1px solid #F1F1F3;border-radius:8px;font-size:14px;margin-bottom:12px;font-family:Inter,sans-serif">';
+    html += '<button onclick="sparkCalcSubmitProposal()" style="width:100%;background:#C05621;color:#fff;padding:13px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer">Send Me the Proposal →</button>';
+    html += '<div id="sp-status" style="text-align:center;margin-top:10px;font-size:13px"></div>';
+    html += '</div>';
 
     html += '</div>';
 
@@ -324,6 +344,64 @@ function renderCalc(containerId) {
     state.custom = true;
     render();
   };
+  window.sparkCalcProposal = function() {
+    var form = document.getElementById('spark-proposal-form');
+    if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  };
+
+  window.sparkCalcSubmitProposal = function() {
+    var name = document.getElementById('sp-name').value.trim();
+    var restaurant = document.getElementById('sp-restaurant').value.trim();
+    var phone = document.getElementById('sp-phone').value.trim();
+    var email = document.getElementById('sp-email').value.trim();
+    var status = document.getElementById('sp-status');
+
+    if (!name || !restaurant || !phone) {
+      status.innerHTML = '<span style="color:#DC3232">Please fill name, restaurant, and phone.</span>';
+      return;
+    }
+
+    // Find the best matching preset service ID
+    var serviceId = svc + '_' + (data.presets[state.selected] ? data.presets[state.selected].name.toLowerCase().replace(/\s+/g,'') : 'custom');
+    // Map to actual service IDs
+    var serviceMap = {
+      'social_starter': 'social_s1', 'social_standard': 'social_s2', 'social_premium': 'social_s3',
+      'google_basic': 'google_g1', 'google_growth': 'google_g2',
+      'whatsapp_basic': 'whatsapp_w1', 'whatsapp_growth': 'whatsapp_w2',
+      'photography_aionly': 'photo_ph1', 'photography_mixed': 'photo_ph2', 'photography_premium': 'photo_ph2',
+      'hiring_singlerole': 'hiring_h1', 'hiring_multirole': 'hiring_h1',
+      'design_packaging': 'design_ds1', 'design_fullbrand': 'design_ds3',
+    };
+    var mappedId = serviceMap[serviceId] || 'social_s2';
+
+    status.innerHTML = '<span style="color:#C05621">Generating your proposal...</span>';
+
+    fetch('/api/proposal?action=create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: mappedId,
+        contact_name: name,
+        restaurant_name: restaurant,
+        phone: phone.replace(/\D/g, ''),
+        email: email || null,
+        location: 'Bangalore',
+        source: 'website_calculator'
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) {
+        status.innerHTML = '<span style="color:#228B54">✅ Proposal sent to your WhatsApp! <a href="' + d.url + '" target="_blank" style="color:#C05621;font-weight:600">View Proposal</a></span>';
+      } else {
+        status.innerHTML = '<span style="color:#DC3232">Error: ' + (d.error || 'Try again') + '</span>';
+      }
+    })
+    .catch(function() {
+      status.innerHTML = '<span style="color:#DC3232">Network error. Try again.</span>';
+    });
+  };
+
   window.sparkCalcAddon = function(id, checked) {
     addonState[id] = checked;
     state.custom = true;
