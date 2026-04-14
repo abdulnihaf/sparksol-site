@@ -299,7 +299,7 @@ function renderCalc(containerId) {
 
     // CTA
     const waMsg = encodeURIComponent("Hi, I'd like a custom " + data.name + " plan: " + t.lines.map(l => l.label).join(', ') + ". Monthly total: " + fmt(t.monthly));
-    html += '<a href="https://wa.me/917010426808?text=' + waMsg + '" style="display:block;text-align:center;background:#228B54;color:#fff;padding:14px;border-radius:8px;font-size:14px;font-weight:600;margin-top:16px;text-decoration:none">Talk to Us on WhatsApp →</a>';
+    html += '<a href="https://wa.me/15559090227?text=' + waMsg + '" style="display:block;text-align:center;background:#228B54;color:#fff;padding:14px;border-radius:8px;font-size:14px;font-weight:600;margin-top:16px;text-decoration:none">Talk to Us on WhatsApp →</a>';
 
     html += '</div>';
 
