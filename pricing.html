@@ -9,7 +9,6 @@
     <link rel="canonical" href="https://sparksol.in/pricing.html">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -31,7 +30,7 @@
 
         .hero{padding:110px 0 48px;text-align:center}
         .hero h1{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-1px;margin-bottom:10px}
-        .hero p{font-size:16px;color:var(--g500);max-width:480px;margin:0 auto}
+        .hero p{font-size:16px;color:var(--g500);max-width:520px;margin:0 auto}
 
         .filters{display:flex;gap:8px;justify-content:center;margin-bottom:36px;flex-wrap:wrap;padding:0 24px}
         .filter-btn{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;border:1px solid var(--g100);background:var(--white);color:var(--g500);cursor:pointer;transition:all var(--t)}
@@ -42,8 +41,10 @@
 
         .price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
 
-        .price-card{background:var(--white);border:1px solid var(--g100);border-radius:var(--r);padding:24px;transition:all var(--t);position:relative}
+        .price-card{background:var(--white);border:2px solid var(--g100);border-radius:var(--r);padding:24px;transition:all var(--t);position:relative;cursor:pointer}
         .price-card:hover{box-shadow:var(--sh);border-color:var(--g300)}
+        .price-card.selected{border-color:var(--amber);box-shadow:0 0 0 3px rgba(192,86,33,0.15);background:var(--amber-light)}
+        .price-card.selected::after{content:'Selected';position:absolute;top:12px;right:12px;background:var(--amber);color:var(--white);font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px}
         .price-card h3{font-size:17px;font-weight:700;margin-bottom:4px}
         .price-card .pc-desc{font-size:13px;color:var(--g500);margin-bottom:14px;line-height:1.5}
         .price-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap;gap:8px}
@@ -64,6 +65,53 @@
         .pack-highlight{border:2px solid var(--amber)}
         .pack-badge{position:absolute;top:-10px;left:20px;background:var(--amber);color:var(--white);font-size:10px;font-weight:700;padding:3px 10px;border-radius:4px}
 
+        /* Cross-sell panel */
+        .cross-sell{display:none;background:var(--bg-warm);border:1px solid var(--amber-light);border-radius:var(--r);padding:20px 24px;margin:16px 0 32px;animation:fadeIn 0.3s ease}
+        .cross-sell.show{display:block}
+        .cross-sell h3{font-size:14px;font-weight:700;color:var(--amber);margin-bottom:12px}
+        .cross-sell-items{display:flex;gap:12px;flex-wrap:wrap}
+        .cross-item{background:var(--white);border:1px solid var(--g100);border-radius:var(--rs);padding:12px 16px;flex:1;min-width:240px;cursor:pointer;transition:all var(--t)}
+        .cross-item:hover{border-color:var(--amber);box-shadow:var(--sh)}
+        .cross-item.added{border-color:var(--amber);background:var(--amber-light)}
+        .cross-item .ci-name{font-size:13px;font-weight:700;margin-bottom:2px}
+        .cross-item .ci-reason{font-size:11px;color:var(--g500);line-height:1.4;margin-bottom:6px}
+        .cross-item .ci-price{font-size:12px;font-weight:700;color:var(--amber)}
+        .cross-item .ci-add{font-size:11px;font-weight:600;color:var(--green);float:right}
+        .cross-item.added .ci-add{color:var(--amber)}
+
+        /* Floating proposal bar */
+        .proposal-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--dark);padding:14px 24px;box-shadow:0 -4px 24px rgba(0,0,0,0.15);animation:slideUp 0.3s ease}
+        .proposal-bar.show{display:block}
+        .pb-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+        .pb-summary{color:var(--white);font-size:14px}
+        .pb-summary strong{color:var(--amber);font-weight:800}
+        .pb-btn{background:var(--amber);color:var(--white);padding:12px 28px;border-radius:var(--rs);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all var(--t);white-space:nowrap}
+        .pb-btn:hover{background:var(--amber-dark);transform:translateY(-1px)}
+
+        /* Proposal form overlay */
+        .form-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px}
+        .form-overlay.show{display:flex}
+        .form-card{background:var(--white);border-radius:16px;padding:36px;max-width:480px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,0.15);position:relative;animation:fadeIn 0.3s ease}
+        .form-card h2{font-size:22px;font-weight:800;margin-bottom:4px}
+        .form-card .form-sub{font-size:13px;color:var(--g500);margin-bottom:20px}
+        .form-selected{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+        .form-selected .fs-tag{background:var(--amber-light);color:var(--amber);font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px}
+        .form-group{margin-bottom:14px}
+        .form-group label{display:block;font-size:12px;font-weight:600;color:var(--g500);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+        .form-group input{width:100%;padding:12px 14px;border:1px solid var(--g100);border-radius:var(--rs);font-size:14px;font-family:inherit;transition:border var(--t);outline:none}
+        .form-group input:focus{border-color:var(--amber)}
+        .form-submit{width:100%;padding:14px;background:var(--green);color:var(--white);border:none;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;transition:all var(--t);margin-top:8px;font-family:inherit}
+        .form-submit:hover{background:var(--green-dark)}
+        .form-submit:disabled{background:var(--g300);cursor:not-allowed}
+        .form-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:var(--g400);cursor:pointer;padding:4px 8px}
+
+        /* Success state */
+        .success-state{text-align:center;padding:20px 0}
+        .success-state .check{font-size:48px;margin-bottom:12px}
+        .success-state h3{font-size:20px;font-weight:800;color:var(--dark);margin-bottom:8px}
+        .success-state p{font-size:14px;color:var(--g500);margin-bottom:20px}
+        .success-state a{display:inline-block;background:var(--green);color:var(--white);padding:12px 28px;border-radius:var(--rs);font-size:14px;font-weight:600;text-decoration:none}
+
         .note{text-align:center;font-size:13px;color:var(--g400);margin:40px 0;line-height:1.6}
         .note a{font-weight:600}
 
@@ -76,15 +124,15 @@
         footer{padding:40px 0 24px;border-top:1px solid var(--g100);text-align:center}
         footer p{font-size:11px;color:var(--g400)}
 
-        .sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99;background:var(--green);padding:10px 20px;text-align:center}
-        .sticky a{color:var(--white);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
-        .sticky a svg{width:18px;height:18px;fill:currentColor}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
-        @media(max-width:768px){.nk{position:absolute;top:64px;left:0;right:0;background:#fff;padding:20px 24px;border-bottom:1px solid var(--g100);flex-direction:column;gap:14px;box-shadow:0 4px 24px rgba(0,0,0,0.06)}.nk.open{display:flex!important}
+        @media(max-width:768px){
             .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:rgba(255,255,255,0.98);backdrop-filter:blur(16px);padding:20px 24px;border-bottom:1px solid var(--g100);flex-direction:column;gap:14px;box-shadow:var(--sh)}
             .nav-links.open{display:flex}.hamburger{display:block}
             .price-grid{grid-template-columns:1fr}
-            .sticky{display:block}body{padding-bottom:50px}
+            .pb-inner{flex-direction:column;text-align:center;gap:10px}
+            body{padding-bottom:70px}
         }
     </style>
 </head>
@@ -98,7 +146,7 @@
             <a href="/pricing" class="active">Pricing</a>
             <a href="/case-study">Case Studies</a>
             <a href="/about">About</a>
-            <a href="https://wa.me/15559090227?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant." class="nav-cta">Talk to Us &rarr;</a>
+            <a href="https://wa.me/917010426808?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant." class="nav-cta">Talk to Us &rarr;</a>
         </div>
         <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')" aria-label="Menu"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
     </div>
@@ -106,8 +154,8 @@
 
 <section class="hero">
     <div class="container">
-        <h1>Simple, transparent pricing.</h1>
-        <p>Every service. Every price. No &ldquo;contact us for pricing.&rdquo; Pick what you need.</p>
+        <h1>Pick what you need. Get a proposal.</h1>
+        <p>Select one or more services below. We'll generate a personalized proposal with exact deliverables, timeline, and pricing.</p>
     </div>
 </section>
 
@@ -125,167 +173,103 @@
     <div class="pricing-section" data-cat="customers">
         <h2>Get More Customers</h2>
         <div class="price-grid">
-            <div class="price-card">
+            <div class="price-card" data-sid="google_g1" onclick="toggleCard(this)">
                 <h3>Google Maps Listing</h3>
                 <div class="pc-desc">Photos, menu, hours, reviews QR &mdash; done and handed over.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;4,999</span></div><span class="price-tag tag-ot">One-time</span></div>
                 <ul class="pc-includes"><li>30+ food photos uploaded</li><li>Full menu with prices</li><li>Review QR codes (5 standees)</li><li>Done in 5 working days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Google%20Maps%20Listing%20(G1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;4,999</a>
+                <span class="pc-cta green">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="google_g2" onclick="toggleCard(this)">
                 <h3>Google Presence Management</h3>
                 <div class="pc-desc">Listing + weekly posts + reviews growth + monthly report.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;7,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;4,999/mo</span></div>
                 <ul class="pc-includes"><li>Everything in Maps Listing</li><li>4 Google posts/month</li><li>Review growth system</li><li>Monthly performance report</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Google%20Presence%20Management%20(G2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="google_g3" onclick="toggleCard(this)">
                 <h3>Google Presence + Ads</h3>
-                <div class="pc-desc">Everything above + Google Search Ads. Limited: 3 per area.</div>
+                <div class="pc-desc">Everything above + Google Search Ads. Show up first for "biryani near me".</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;9,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;9,999/mo</span></div>
                 <ul class="pc-includes"><li>Everything in Presence Mgmt</li><li>Google Ads campaign</li><li>Monthly ads report with ROI</li><li>Ad spend separate (min &#8377;10K/mo)</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Google%20Presence%20%2B%20Ads%20(G3)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="social_s1" onclick="toggleCard(this)">
                 <h3>Social Media Setup + Photos</h3>
                 <div class="pc-desc">Instagram &amp; Facebook pages + AI food photography (40 dishes).</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;14,999</span></div><span class="price-tag tag-ot">One-time</span></div>
                 <ul class="pc-includes"><li>IG + FB pages with brand identity</li><li>First 9 posts published</li><li>40 dish photos (AI)</li><li>All assets handed over</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Social%20Media%20Setup%20(S1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;14,999</a>
+                <span class="pc-cta green">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="social_s2" onclick="toggleCard(this)">
                 <h3>Social Media Management</h3>
                 <div class="pc-desc">Setup + 20 posts/month + stories + DM management.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;14,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;12,999/mo</span></div>
                 <ul class="pc-includes"><li>Everything in Setup + Photos</li><li>20 posts/month (IG + FB)</li><li>10 stories/month</li><li>Monthly analytics report</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Social%20Media%20Management%20(S2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="social_s3" onclick="toggleCard(this)">
                 <h3>Social Media Full Service</h3>
-                <div class="pc-desc">Management + 4 reels/month + IG/FB ads. Limited: 5 per area.</div>
+                <div class="pc-desc">Management + 4 reels/month + IG/FB ads.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;14,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;24,999/mo</span></div>
                 <ul class="pc-includes"><li>Everything in Management</li><li>4 food reels/month</li><li>Instagram &amp; Facebook ads</li><li>Quarterly strategy review</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Social%20Media%20Full%20Service%20(S3)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="whatsapp_w1" onclick="toggleCard(this)">
                 <h3>WhatsApp Ordering + Booking</h3>
-                <div class="pc-desc">Full ordering bot + payments + table booking + auto-replies.</div>
+                <div class="pc-desc">Full ordering bot + payments + table booking. Save 25% vs Swiggy.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;24,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;11,999/yr</span></div>
                 <ul class="pc-includes"><li>WABA ordering (50 items)</li><li>Razorpay payment integration</li><li>Table booking flow</li><li>Live in 10 working days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20WhatsApp%20Ordering%20(W1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;24,999</a>
+                <span class="pc-cta green">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="whatsapp_w2" onclick="toggleCard(this)">
                 <h3>WhatsApp Ordering + Marketing</h3>
-                <div class="pc-desc">Ordering + broadcasts + auto follow-ups. Limited: 2 per cuisine per area.</div>
+                <div class="pc-desc">Ordering + broadcasts + auto follow-ups. Bring customers back.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;34,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;7,999/mo</span></div>
                 <ul class="pc-includes"><li>Everything in Ordering</li><li>2 broadcast campaigns/month</li><li>72-hour auto follow-up</li><li>Customer auto-tagging</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20WhatsApp%20Marketing%20(W2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>WhatsApp Complete</h3>
-                <div class="pc-desc">Ordering + marketing + full CRM. Exclusive: 1 per cuisine per 3km.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;49,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;14,999/mo</span></div>
-                <ul class="pc-includes"><li>Everything in Marketing</li><li>Customer tracking dashboard</li><li>4 campaigns/month</li><li>Quarterly strategy call</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20WhatsApp%20Complete%20(W3)%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
-            </div>
-            <div class="price-card">
-                <h3>Single Platform Setup</h3>
-                <div class="pc-desc">Swiggy OR Zomato OR EazyDiner &mdash; registration + menu.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;5,999</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <ul class="pc-includes"><li>Partner registration</li><li>Menu upload + photos</li><li>Category optimization</li><li>7-12 working days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Platform%20Setup%20(D1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;5,999</a>
-            </div>
-            <div class="price-card">
-                <h3>All Platforms + Commission Analysis</h3>
-                <div class="pc-desc">Swiggy + Zomato + EazyDiner + which one makes you most money.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <ul class="pc-includes"><li>All 3 platforms set up</li><li>Commission analysis report</li><li>Channel profitability ranking</li><li>15 working days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20All%20Platforms%20(D2)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;14,999</a>
-            </div>
-            <div class="price-card">
-                <h3>QR Menu</h3>
-                <div class="pc-desc">Digital menu + QR code + 10 printed acrylic standees. No monthly fee.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;3,999</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <ul class="pc-includes"><li>All items with photos</li><li>Mobile-responsive</li><li>10 printed QR standees</li><li>Done in 3 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20QR%20Menu%20(WB1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;3,999</a>
-            </div>
-            <div class="price-card">
-                <h3>Restaurant Website</h3>
-                <div class="pc-desc">Full website + QR menu + SEO + analytics. Zero hosting cost.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;19,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;4,999/yr</span></div>
-                <ul class="pc-includes"><li>5 pages + QR menu</li><li>SEO + Google Analytics</li><li>Click-to-WhatsApp buttons</li><li>10 working days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Restaurant%20Website%20(WB2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
         </div>
+    </div>
+
+    <!-- Cross-sell panel (dynamically populated) -->
+    <div class="cross-sell" id="crossSell">
+        <h3>People who get this also add:</h3>
+        <div class="cross-sell-items" id="crossItems"></div>
     </div>
 
     <!-- DESIGN & PHOTOGRAPHY -->
     <div class="pricing-section" data-cat="design">
         <h2>Design &amp; Photography</h2>
         <div class="price-grid">
-            <div class="price-card">
+            <div class="price-card" data-sid="photo_ph1" onclick="toggleCard(this)">
                 <h3>AI Food Photography</h3>
-                <div class="pc-desc">40 AI-generated dish photos. Styled + white background. Ready for all platforms.</div>
+                <div class="pc-desc">40 AI-generated dish photos. Styled + white background. All platforms.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;8,000</span></div><span class="price-tag tag-ot">One-time</span></div>
                 <ul class="pc-includes"><li>40 dishes (AI-generated)</li><li>Styled + white bg variants</li><li>Swiggy, Zomato, IG exports</li><li>Delivered in 5 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20AI%20Food%20Photography%20(PH1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;8,000</a>
+                <span class="pc-cta green">Select this service</span>
             </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="photo_ph2" onclick="toggleCard(this)">
                 <h3>Real Menu Shoot</h3>
-                <div class="pc-desc">Professional photographer on-site. Up to 15 dishes, styled and lit properly.</div>
+                <div class="pc-desc">Professional photographer on-site. Up to 15 dishes, styled and lit.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;14,999</span></div><span class="price-tag tag-ot">One-time</span></div>
                 <ul class="pc-includes"><li>Photographer on-site (half day)</li><li>Up to 15 dishes, multiple angles</li><li>Edited high-res files</li><li>Delivered in 7 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Real%20Menu%20Shoot%20(PH2)%20for%20my%20restaurant." class="pc-cta amber">Free Assessment</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
-            <div class="price-card">
-                <h3>Premium Photography Suite</h3>
-                <div class="pc-desc">Up to 40 dishes styled + interior and ambiance shots. Full day shoot.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;29,999</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <ul class="pc-includes"><li>Up to 40 dishes (premium styling)</li><li>Interior + ambiance photos</li><li>All platform exports</li><li>Delivered in 10 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Premium%20Photography%20(PH3)%20for%20my%20restaurant." class="pc-cta amber">Free Assessment</a>
-            </div>
-            <div class="price-card">
+            <div class="price-card" data-sid="design_ds1" onclick="toggleCard(this)">
                 <h3>Packaging Design (3 SKUs)</h3>
-                <div class="pc-desc">Branded box, bag, and cup/napkin with logo, QR code, print-ready files.</div>
+                <div class="pc-desc">Branded box, bag, and cup/napkin with logo, QR code, print-ready.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;10,500</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <ul class="pc-includes"><li>3 packaging items designed</li><li>Logo, brand colors, QR code</li><li>Print-ready files (PDF, AI, PNG)</li><li>Delivered in 7 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Packaging%20Design%20(DS1)%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;10,500</a>
+                <ul class="pc-includes"><li>3 packaging items designed</li><li>Logo, brand colors, QR code</li><li>Print-ready files (PDF, AI)</li><li>Delivered in 7 days</li></ul>
+                <span class="pc-cta green">Select this service</span>
             </div>
-            <div class="price-card">
-                <h3>Menu Card Design (8 pages)</h3>
-                <div class="pc-desc">Printed menu with food photos, pricing psychology, brand identity.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;12,000</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <ul class="pc-includes"><li>Up to 8-page menu design</li><li>Food photos integrated</li><li>Print-ready PDF + Figma source</li><li>Delivered in 10 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Menu%20Card%20Design%20(DS2)%20for%20my%20restaurant." class="pc-cta amber">Free Assessment</a>
-            </div>
-            <div class="price-card pack-highlight">
+            <div class="price-card pack-highlight" data-sid="design_ds3" onclick="toggleCard(this)">
                 <div class="pack-badge">Popular</div>
                 <h3>Full Brand Suite</h3>
                 <div class="pc-desc">3 packaging designs + 8-page menu card. Consistent brand across everything.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;22,500</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <ul class="pc-includes"><li>3 packaging items + 8-page menu</li><li>Consistent brand identity</li><li>All print-ready files + Figma</li><li>Delivered in 12 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Full%20Brand%20Suite%20(DS3)%20for%20my%20restaurant." class="pc-cta amber">Free Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Influencer Visit</h3>
-                <div class="pc-desc">Food blogger visits your restaurant. We coordinate, you get the content.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;5,000</span></div><span class="price-tag tag-ot">Per visit</span></div>
-                <ul class="pc-includes"><li>1 micro/nano influencer coordinated</li><li>Content deliverable (post or reel)</li><li>Influencer payment separate</li><li>Coordinated end to end</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20an%20Influencer%20Visit%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;5,000</a>
-            </div>
-            <div class="price-card">
-                <h3>Festival Campaign Set</h3>
-                <div class="pc-desc">5 social posts + 3 stories themed for Ramadan, Diwali, Eid, or any festival.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;5,500</span></div><span class="price-tag tag-ot">Per campaign</span></div>
-                <ul class="pc-includes"><li>5 branded social posts</li><li>3 Instagram stories</li><li>Uses your existing brand kit</li><li>Delivered in 5 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20a%20Festival%20Campaign%20Set%20for%20my%20restaurant." class="pc-cta green">Get Started &mdash; &#8377;5,500</a>
-            </div>
-            <div class="price-card">
-                <h3>WhatsApp Loyalty Program</h3>
-                <div class="pc-desc">Digital stamp card on WhatsApp. Customers earn rewards without downloading an app.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;2,999</span><span class="price-freq">/month</span></div><span class="price-tag tag-mo">Monthly</span></div>
-                <ul class="pc-includes"><li>Stamp card system on WhatsApp</li><li>Auto-tracked with orders</li><li>No app download needed</li><li>Requires WhatsApp Ordering</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20WhatsApp%20Loyalty%20Program%20for%20my%20restaurant." class="pc-cta amber">Free Assessment</a>
+                <ul class="pc-includes"><li>3 packaging items + 8-page menu</li><li>Consistent brand identity</li><li>All print-ready files</li><li>Delivered in 12 days</li></ul>
+                <span class="pc-cta amber">Select this service</span>
             </div>
         </div>
     </div>
@@ -294,68 +278,12 @@
     <div class="pricing-section" data-cat="operations">
         <h2>Run Better Operations</h2>
         <div class="price-grid">
-            <div class="price-card">
+            <div class="price-card" data-sid="pos_p1" onclick="toggleCard(this)">
                 <h3>Self-Hosted POS</h3>
                 <div class="pc-desc">Own your billing system. No monthly SaaS fees. Your data stays with you.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;29,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;9,999/yr</span></div>
                 <ul class="pc-includes"><li>Odoo 19 POS (you own it)</li><li>100 items configured</li><li>Staff training (2 hours)</li><li>Extra counter: &#8377;4,999 each</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Self-Hosted%20POS%20(P1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Kitchen Display System</h3>
-                <div class="pc-desc">Orders on kitchen TV. No paper KOTs. Zero monthly software cost.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;5,999/yr</span></div>
-                <ul class="pc-includes"><li>KDS on Cloudflare (&#8377;0/mo)</li><li>1 screen configured</li><li>Extra screen: &#8377;4,999</li><li>Requires POS</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Kitchen%20Display%20(K1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Cash Settlement</h3>
-                <div class="pc-desc">Know exactly how much cash each staff should hand over. Every shift.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;19,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;7,999/yr</span></div>
-                <ul class="pc-includes"><li>PIN-gated settlement dashboard</li><li>Shift-wise reconciliation</li><li>Daily PDF + WhatsApp report</li><li>Requires POS</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Cash%20Settlement%20(C1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Cash Settlement + Auto-Matching</h3>
-                <div class="pc-desc">POS vs UPI vs cash &mdash; every rupee matched automatically. Limited availability.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;34,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;11,999/yr</span></div>
-                <ul class="pc-includes"><li>Everything in Settlement</li><li>Three-way auto-reconciliation</li><li>Discrepancy alerts on WhatsApp</li><li>Monthly trend report</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Settlement%20%2B%20Auto-Matching%20(C2)%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
-            </div>
-            <div class="price-card">
-                <h3>Inventory Tracking</h3>
-                <div class="pc-desc">Know what&rsquo;s in stock. Barcode delivery verification. Low-stock alerts.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;19,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;7,999/yr</span></div>
-                <ul class="pc-includes"><li>100 materials configured</li><li>Barcode verification app</li><li>Low-stock WhatsApp alerts</li><li>Requires POS</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Inventory%20Tracking%20(I1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Inventory + Purchasing</h3>
-                <div class="pc-desc">Tracking + consumption mapping + vendor POs + vendor database.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;39,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;14,999/yr</span></div>
-                <ul class="pc-includes"><li>Everything in Tracking</li><li>Product-to-material mapping</li><li>Vendor order system</li><li>Weekly waste report</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Inventory%20%2B%20Purchasing%20(I2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Inventory + Demand Prediction</h3>
-                <div class="pc-desc">Everything above + ML &ldquo;what to buy tomorrow.&rdquo; Limited availability.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;59,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;19,999/yr</span></div>
-                <ul class="pc-includes"><li>Everything in Purchasing</li><li>ML demand prediction</li><li>Suggested purchase quantities</li><li>Needs 30+ days POS data</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Inventory%20%2B%20Prediction%20(I3)%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
-            </div>
-            <div class="price-card">
-                <h3>Daily P&amp;L Dashboard</h3>
-                <div class="pc-desc">Know your profit today. Revenue &minus; costs &minus; expenses. Every day.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;24,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;9,999/yr</span></div>
-                <ul class="pc-includes"><li>Daily profit/loss view</li><li>Top/bottom selling items</li><li>WhatsApp daily summary</li><li>Requires POS + Inventory or Settlement</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Daily%20P%26L%20(O1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Staff Operations Hub</h3>
-                <div class="pc-desc">PIN-gated dashboard. Table management. Captain/waiter system.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;29,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ &#8377;9,999/yr</span></div>
-                <ul class="pc-includes"><li>Role-based access (PIN)</li><li>Table pipeline tracking</li><li>Shift management</li><li>Mobile app add-on: &#8377;14,999</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Staff%20Hub%20(F1)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
         </div>
     </div>
@@ -364,19 +292,12 @@
     <div class="pricing-section" data-cat="hiring">
         <h2>Hire Faster</h2>
         <div class="price-grid">
-            <div class="price-card">
+            <div class="price-card" data-sid="hiring_h1" onclick="toggleCard(this)">
                 <h3>Hiring Campaign</h3>
-                <div class="pc-desc">Job posters + Apna + WorkIndia + Facebook groups. Per campaign.</div>
+                <div class="pc-desc">Job posters + Apna + WorkIndia + Facebook groups. 20 screened candidates.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;6,999</span></div><span class="price-tag tag-ot">Per campaign</span></div>
                 <ul class="pc-includes"><li>2 poster variations</li><li>Multi-platform posting</li><li>20 screened candidates</li><li>7-10 working days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%20need%20a%20Hiring%20Campaign%20(H1)%20for%20my%20restaurant." class="pc-cta green">Start Hiring &mdash; &#8377;6,999</a>
-            </div>
-            <div class="price-card">
-                <h3>Hiring Ongoing</h3>
-                <div class="pc-desc">Continuous sourcing + WhatsApp campaigns + candidate DB. Limited: 2 per area.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;14,999</span><span class="price-freq">/month</span></div><span class="price-tag tag-mo">Monthly</span></div>
-                <ul class="pc-includes"><li>2 campaigns/month</li><li>WhatsApp hiring blasts</li><li>Candidate database</li><li>Priority: urgent roles in 3-5 days</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20Hiring%20Ongoing%20(H2)%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
+                <span class="pc-cta green">Select this service</span>
             </div>
         </div>
     </div>
@@ -385,69 +306,273 @@
     <div class="pricing-section" data-cat="packs">
         <h2>Combined Packs</h2>
         <div class="price-grid">
-            <div class="price-card">
+            <div class="price-card" data-sid="pack_m1" onclick="toggleCard(this)">
                 <h3>Starter Pack</h3>
                 <div class="pc-desc">Google + Social + QR Menu + Platform. Get found online.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;24,999</span></div><span class="price-tag tag-ot">One-time</span></div>
-                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save Save &#8377;5,000#8377;4,997</span></div>
                 <ul class="pc-includes"><li>Google Maps Listing</li><li>Social Media Setup + Photos</li><li>QR Menu + standees</li><li>Swiggy or Zomato listing</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20the%20Starter%20Pack%20for%20my%20restaurant." class="pc-cta green">Get Starter Pack</a>
+                <span class="pc-cta green">Select this service</span>
             </div>
-            <div class="price-card pack-highlight">
+            <div class="price-card pack-highlight" data-sid="pack_m2" onclick="toggleCard(this)">
                 <div class="pack-badge">Most Popular</div>
                 <h3>Growth Pack</h3>
                 <div class="pc-desc">Full marketing handled. Google + Social + WhatsApp + Platforms + Website.</div>
                 <div class="price-row"><div><span class="price-amount">&#8377;69,999</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;14,999/mo</span></div>
-                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save &#8377;16,000</span></div>
                 <ul class="pc-includes"><li>Google Presence Management</li><li>Social Media Management</li><li>WhatsApp Ordering + Booking</li><li>All Delivery Platforms</li><li>Restaurant Website</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20the%20Growth%20Pack%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>Operations Pack</h3>
-                <div class="pc-desc">POS + Kitchen + Settlement + Inventory + P&amp;L. Your restaurant runs itself.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;1.25L</span> <span class="price-freq">setup</span></div><span class="price-tag tag-amc">+ + &#8377;40K/yr#8377;39,999/yr</span></div>
-                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save &#8377;34,000</span></div>
-                <ul class="pc-includes"><li>Self-Hosted POS</li><li>Kitchen Display System</li><li>Cash Settlement + Auto-Matching</li><li>Inventory + Purchasing</li><li>Daily P&amp;L Dashboard</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20the%20Operations%20Pack%20for%20my%20restaurant." class="pc-cta amber">Free 15-Min Assessment</a>
-            </div>
-            <div class="price-card">
-                <h3>All-In-One</h3>
-                <div class="pc-desc">We handle everything. You cook food. Qualification required.</div>
-                <div class="price-row"><div><span class="price-amount">&#8377;2.2L</span> <span class="price-freq">setup</span></div><span class="price-tag tag-mo">+ &#8377;15K/mo + + &#8377;40K/yr#8377;39,999/yr</span></div>
-                <div style="margin-bottom:14px"><span class="price-tag" style="background:var(--green-light);color:var(--green)">Save &#8377;55,000</span></div>
-                <ul class="pc-includes"><li>Everything in Growth Pack</li><li>Everything in Operations Pack</li><li>Staff Operations Hub</li><li>WhatsApp Complete (CRM)</li></ul>
-                <a href="https://wa.me/15559090227?text=Hi%2C%20I%27m%20interested%20in%20the%20All-In-One%20Pack%20for%20my%20restaurant." class="pc-cta outline">Request a Proposal</a>
+                <span class="pc-cta amber">Select this service</span>
             </div>
         </div>
     </div>
 
     <div class="note">
         All prices exclusive of GST. Hardware (TVs, tablets, printers) is separate &mdash; we recommend, you buy.<br>
-        Need help choosing? <a href="https://wa.me/15559090227?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20services%20for%20my%20restaurant.">Message us on WhatsApp</a> &mdash; we&rsquo;ll recommend the right services.
+        Need help choosing? <a href="https://wa.me/917010426808?text=Hi%2C%20I%20need%20help%20choosing%20the%20right%20services%20for%20my%20restaurant.">Message us on WhatsApp</a> &mdash; we'll recommend the right services.
     </div>
 </div>
 
-<section class="final">
+<section class="final" id="finalCta">
     <div class="container">
         <h2>Every price. On this page. No surprises.</h2>
-        <p>Message us and we&rsquo;ll tell you exactly what you need. No pressure.</p>
-        <a href="https://wa.me/15559090227?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant." class="btn-wa">
+        <p>Select services above and get a personalized proposal instantly.</p>
+        <a href="https://wa.me/917010426808?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant." class="btn-wa">
             <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.12 1.52 5.855L0 24l6.335-1.652A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.822 0-3.542-.488-5.018-1.393l-.36-.214-3.733.979.996-3.64-.235-.374A9.77 9.77 0 012.182 12 9.818 9.818 0 0112 2.182 9.818 9.818 0 0121.818 12 9.818 9.818 0 0112 21.818z"/></svg>
-            Talk to Us on WhatsApp
+            Or Talk to Us on WhatsApp
         </a>
     </div>
 </section>
 
-<footer><div class="container"><p>SparkSol Hospitality Pvt Ltd &middot; CIN: U74999KA2019PTC122300 &middot; Bangalore &middot; <a href="/">Home</a> &middot; <a href="/pricing">Pricing</a> &middot; <a href="/about">About</a></p></div></footer>
-
-<div class="sticky">
-    <a href="https://wa.me/15559090227?text=Hi%2C%20I%27d%20like%20to%20know%20about%20SparkSol%20services%20for%20my%20restaurant.">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.12 1.52 5.855L0 24l6.335-1.652A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.822 0-3.542-.488-5.018-1.393l-.36-.214-3.733.979.996-3.64-.235-.374A9.77 9.77 0 012.182 12 9.818 9.818 0 0112 2.182 9.818 9.818 0 0121.818 12 9.818 9.818 0 0112 21.818z"/></svg>
-        Talk to Us on WhatsApp
-    </a>
+<!-- Floating proposal bar -->
+<div class="proposal-bar" id="proposalBar">
+    <div class="pb-inner">
+        <div class="pb-summary"><span id="pbCount">0</span> service(s) selected &mdash; <strong id="pbTotal">&#8377;0</strong></div>
+        <button class="pb-btn" onclick="openForm()">Get Your Proposal &rarr;</button>
+    </div>
 </div>
 
+<!-- Proposal form overlay -->
+<div class="form-overlay" id="formOverlay">
+    <div class="form-card">
+        <button class="form-close" onclick="closeForm()">&times;</button>
+        <div id="formContent">
+            <h2>Get Your Proposal</h2>
+            <div class="form-sub">We'll create a personalized proposal with exact deliverables, timeline, and pricing for your restaurant.</div>
+            <div class="form-selected" id="formSelected"></div>
+            <div class="form-group"><label>Your Name</label><input type="text" id="fName" placeholder="Farhan Ahmed" required></div>
+            <div class="form-group"><label>Restaurant Name</label><input type="text" id="fRestaurant" placeholder="Biryani Blues" required></div>
+            <div class="form-group"><label>WhatsApp Number</label><input type="tel" id="fPhone" placeholder="9876543210" required></div>
+            <div class="form-group"><label>Location (City/Area)</label><input type="text" id="fLocation" placeholder="Koramangala, Bangalore" value="Bangalore"></div>
+            <button class="form-submit" id="formSubmit" onclick="submitProposal()">Generate Proposal</button>
+        </div>
+    </div>
+</div>
+
+<footer><div class="container"><p>SparkSol Hospitality Pvt Ltd &middot; CIN: U74999KA2019PTC122300 &middot; Bangalore &middot; <a href="/">Home</a> &middot; <a href="/pricing">Pricing</a> &middot; <a href="/about">About</a></p></div></footer>
+
 <script>
+// State
+const selected = new Set();
+const crossAdded = new Set();
+
+// Cross-sell data (loaded from API on first selection)
+let serviceCache = {};
+
+function toggleCard(el) {
+    const sid = el.dataset.sid;
+    if (!sid) return;
+
+    if (selected.has(sid)) {
+        selected.delete(sid);
+        el.classList.remove('selected');
+        el.querySelector('.pc-cta').textContent = 'Select this service';
+    } else {
+        selected.add(sid);
+        el.classList.add('selected');
+        el.querySelector('.pc-cta').textContent = 'Selected';
+    }
+    updateBar();
+    updateCrossSell();
+}
+
+function updateBar() {
+    const bar = document.getElementById('proposalBar');
+    const count = selected.size + crossAdded.size;
+    if (count > 0) {
+        bar.classList.add('show');
+        document.getElementById('pbCount').textContent = count;
+        // Calculate total setup cost
+        let total = 0;
+        [...selected, ...crossAdded].forEach(async sid => {
+            const s = await getService(sid);
+            if (s) total += s.setup || 0;
+        });
+        // Quick estimate from card prices
+        document.querySelectorAll('.price-card.selected .price-amount').forEach(el => {
+            const v = el.textContent.replace(/[^\d]/g, '');
+            if (v) total += parseInt(v);
+        });
+        document.getElementById('pbTotal').innerHTML = '&#8377;' + count + ' service(s)';
+    } else {
+        bar.classList.remove('show');
+    }
+}
+
+async function getService(sid) {
+    if (serviceCache[sid]) return serviceCache[sid];
+    try {
+        const res = await fetch('/api/proposal?action=service-detail&id=' + sid);
+        const data = await res.json();
+        serviceCache[sid] = data;
+        return data;
+    } catch (e) { return null; }
+}
+
+async function updateCrossSell() {
+    const panel = document.getElementById('crossSell');
+    const items = document.getElementById('crossItems');
+
+    if (selected.size === 0) {
+        panel.classList.remove('show');
+        crossAdded.clear();
+        return;
+    }
+
+    // Gather all suggestions from selected services
+    const allSuggestions = new Map();
+    for (const sid of selected) {
+        const s = await getService(sid);
+        if (s && s.suggestDetails) {
+            s.suggestDetails.forEach(sg => {
+                if (!selected.has(sg.id) && !allSuggestions.has(sg.id)) {
+                    // Find the reason from the parent service's suggests
+                    const parentSuggests = s.suggests || [];
+                    const reason = parentSuggests.find(ps => typeof ps === 'object' && ps.id === sg.id)?.reason || '';
+                    allSuggestions.set(sg.id, { ...sg, reason });
+                }
+            });
+        }
+    }
+
+    if (allSuggestions.size === 0) {
+        panel.classList.remove('show');
+        return;
+    }
+
+    items.innerHTML = '';
+    allSuggestions.forEach((sg, sgId) => {
+        const isAdded = crossAdded.has(sgId);
+        const div = document.createElement('div');
+        div.className = 'cross-item' + (isAdded ? ' added' : '');
+        div.innerHTML = `
+            <div class="ci-name">${sg.name}</div>
+            <div class="ci-reason">${sg.reason || 'Commonly paired with your selection'}</div>
+            <div class="ci-price">&#8377;${(sg.setup || 0).toLocaleString('en-IN')}${sg.monthly ? ' + &#8377;' + sg.monthly.toLocaleString('en-IN') + '/mo' : ''}</div>
+            <span class="ci-add">${isAdded ? 'Added' : '+ Add'}</span>
+        `;
+        div.onclick = () => {
+            if (crossAdded.has(sgId)) {
+                crossAdded.delete(sgId);
+            } else {
+                crossAdded.add(sgId);
+            }
+            updateCrossSell();
+            updateBar();
+        };
+        items.appendChild(div);
+    });
+    panel.classList.add('show');
+}
+
+function openForm() {
+    const overlay = document.getElementById('formOverlay');
+    const sel = document.getElementById('formSelected');
+    const content = document.getElementById('formContent');
+
+    // Reset to form state
+    content.innerHTML = `
+        <h2>Get Your Proposal</h2>
+        <div class="form-sub">We'll create a personalized proposal with exact deliverables, timeline, and pricing.</div>
+        <div class="form-selected" id="formSelected"></div>
+        <div class="form-group"><label>Your Name</label><input type="text" id="fName" placeholder="Farhan Ahmed" required></div>
+        <div class="form-group"><label>Restaurant Name</label><input type="text" id="fRestaurant" placeholder="Biryani Blues" required></div>
+        <div class="form-group"><label>WhatsApp Number</label><input type="tel" id="fPhone" placeholder="9876543210" required></div>
+        <div class="form-group"><label>Location (City/Area)</label><input type="text" id="fLocation" placeholder="Koramangala, Bangalore" value="Bangalore"></div>
+        <button class="form-submit" onclick="submitProposal()">Generate Proposal</button>
+    `;
+
+    // Show selected service tags
+    const tagsEl = content.querySelector('#formSelected');
+    const allIds = [...selected, ...crossAdded];
+    allIds.forEach(sid => {
+        const card = document.querySelector(`[data-sid="${sid}"] h3`);
+        const name = card ? card.textContent : sid;
+        tagsEl.innerHTML += `<span class="fs-tag">${name}</span>`;
+    });
+
+    overlay.classList.add('show');
+}
+
+function closeForm() {
+    document.getElementById('formOverlay').classList.remove('show');
+}
+
+async function submitProposal() {
+    const name = document.getElementById('fName').value.trim();
+    const restaurant = document.getElementById('fRestaurant').value.trim();
+    const phone = document.getElementById('fPhone').value.trim();
+    const location = document.getElementById('fLocation').value.trim();
+
+    if (!name || !restaurant || !phone) {
+        alert('Please fill in your name, restaurant name, and WhatsApp number.');
+        return;
+    }
+
+    const btn = document.querySelector('.form-submit');
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+
+    // Create proposal for the primary selected service (first one)
+    const primaryId = [...selected][0];
+    const allIds = [...selected, ...crossAdded];
+
+    try {
+        const res = await fetch('/api/proposal?action=create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                service_id: primaryId,
+                restaurant_name: restaurant,
+                contact_name: name,
+                phone: phone.replace(/\D/g, '').replace(/^(\d{10})$/, '91$1'),
+                location: location || 'Bangalore',
+                source: 'website_pricing'
+            })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            // Show success state
+            document.getElementById('formContent').innerHTML = `
+                <div class="success-state">
+                    <div class="check">&#10003;</div>
+                    <h3>Your proposal is ready!</h3>
+                    <p>Personalized for <strong>${restaurant}</strong><br>
+                    ${allIds.length > 1 ? allIds.length + ' services selected' : document.querySelector('[data-sid="' + primaryId + '"] h3')?.textContent || 'Your service'}</p>
+                    <a href="${data.url}" target="_blank">View Your Proposal &rarr;</a>
+                    <p style="margin-top:16px;font-size:12px;color:var(--g400)">We'll also send this to your WhatsApp once our messaging is set up.</p>
+                </div>
+            `;
+        } else {
+            btn.disabled = false;
+            btn.textContent = 'Generate Proposal';
+            alert('Something went wrong. Please try again or message us on WhatsApp.');
+        }
+    } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Generate Proposal';
+        alert('Network error. Please try again.');
+    }
+}
+
 function filterCards(cat) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
@@ -455,8 +580,17 @@ function filterCards(cat) {
         s.style.display = (cat === 'all' || s.dataset.cat === cat) ? '' : 'none';
     });
 }
+
+// Close form on outside click
+document.getElementById('formOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeForm();
+});
+
+// Close nav on link click
+document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('navLinks')?.classList.remove('open'));
+});
 </script>
 
-<script>document.querySelectorAll(".nav-links a, .nk a").forEach(function(a){a.addEventListener("click",function(){var m=document.getElementById("navLinks");if(m)m.classList.remove("open")})});</script>
-<script>/*nav-link-close*/document.querySelectorAll("a").forEach(function(l){l.addEventListener("click",function(){var n=document.getElementById("navLinks");if(n)n.classList.remove("open")})})</script></body>
+</body>
 </html>
