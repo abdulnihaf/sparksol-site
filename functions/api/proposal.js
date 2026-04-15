@@ -229,6 +229,24 @@ export async function onRequest(context) {
       // Send via WhatsApp (non-blocking — don't crash if WA fails)
       if (data.phone) {
         const phone = data.phone.replace(/\D/g, '');
+
+        // Write conversation state so bot knows this lead if they reply
+        env.DB.prepare(`
+          INSERT INTO conversations (phone, step, data, updated_at)
+          VALUES (?1, 'proposal_sent', ?2, datetime('now'))
+          ON CONFLICT(phone) DO UPDATE SET step = 'proposal_sent', data = ?2, updated_at = datetime('now')
+        `).bind(phone, JSON.stringify({
+          step: 'proposal_sent',
+          contact_name: data.contact_name || '',
+          restaurant_name: data.restaurant_name || '',
+          location: data.location || 'Bangalore',
+          service_id: serviceId,
+          service_name: service.name,
+          proposal_url: proposalUrl,
+          proposal_id: id,
+          source: data.source || 'website_form',
+        })).run().catch(e => console.error('Conv state error:', e));
+
         sendWhatsAppProposal(env, phone, data.restaurant_name, data.contact_name, service.name, proposalUrl, id, { ...service, id, restaurant_name: data.restaurant_name, contact_name: data.contact_name, location: data.location, created_at: new Date().toISOString() }).catch(e => console.error('WA error:', e));
       }
 

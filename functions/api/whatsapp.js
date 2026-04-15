@@ -1,9 +1,48 @@
-// SparkSol WhatsApp Bot v2 — Cloudflare Worker
-// Precision flow: restaurant → location → pain point → service → customisation → cross-sell → email → proposal → call scheduling
+// SparkSol WhatsApp Bot v3 — Cloudflare Worker
+// Two entry paths:
+//   A) Website CTA (SPARKSOL:s=X) → fast-track: knows service, skips challenge+service steps
+//   B) Generic → full 9-step flow
 // WABA: Sparksol | Phone: +91 94914 78569 | Phone ID: 1092313753959048
 
 const WA_API = 'https://graph.facebook.com/v21.0';
 const CATALOG_ID = '1463846368518886'; // SparkSol Services catalogue
+
+// ═══════════════════════════════════════════════════════════════
+// SERVICE NAME LOOKUP (mirrors proposal.js SERVICES keys)
+// ═══════════════════════════════════════════════════════════════
+
+const SERVICE_NAMES = {
+  google_g1: 'Google Maps Listing',
+  google_g2: 'Google Presence Management',
+  google_g3: 'Google Presence + Ads',
+  social_s1: 'Social Media Setup + Photos',
+  social_s2: 'Social Media Management',
+  social_s3: 'Social Media Full Service',
+  whatsapp_w1: 'WhatsApp Ordering + Booking',
+  whatsapp_w2: 'WhatsApp Ordering + Marketing',
+  pos_p1: 'Self-Hosted POS',
+  photo_ph1: 'AI Food Photography',
+  photo_ph2: 'Real Menu Shoot',
+  design_ds1: 'Packaging Design',
+  hiring_h1: 'WhatsApp Hiring Campaign',
+};
+
+// Parse structured website context: "SPARKSOL:s=whatsapp_w1&m=14999&n=4+campaigns"
+function parseWebsiteContext(msg) {
+  if (!msg || !msg.startsWith('SPARKSOL:')) return null;
+  try {
+    const params = new URLSearchParams(msg.slice(9));
+    const serviceId = params.get('s');
+    if (!serviceId || !SERVICE_NAMES[serviceId]) return null;
+    return {
+      service_id: serviceId,
+      service_name: SERVICE_NAMES[serviceId],
+      monthly: params.get('m') ? parseInt(params.get('m')) : null,
+      custom_notes: params.get('n') ? decodeURIComponent(params.get('n').replace(/\+/g, ' ')) : '',
+      source: 'website_cta',
+    };
+  } catch (e) { return null; }
+}
 
 // ═══════════════════════════════════════════════════════════════
 // PAIN POINT → SERVICE MAPPING
@@ -174,6 +213,8 @@ export async function onRequest(context) {
         await handleEmail(env, from, msgText, state); break;
       case 'asked_schedule':
         await handleSchedule(env, from, interactiveReply || msgText, state); break;
+      case 'proposal_sent':
+        await handleProposalFollowUp(env, from, interactiveReply || msgText, state); break;
       case 'complete':
         await handleExisting(env, from, msgText, state); break;
       default:
@@ -192,20 +233,45 @@ export async function onRequest(context) {
 // ═══════════════════════════════════════════════════════════════
 
 async function handleNew(env, from, name, firstMsg, state) {
-  await setState(env.DB, from, {
-    step: 'asked_restaurant',
-    contact_name: name,
-    first_message: firstMsg,
-    source: detectSource(firstMsg),
-  });
-
+  const ctx = parseWebsiteContext(firstMsg);
   const firstName = name ? name.split(' ')[0] : '';
-  await sendText(env, from,
-    `Hi${firstName ? ' ' + firstName : ''}! 👋\n\n` +
-    `I'm from *SparkSol* — we help restaurants and cafes in Bangalore with technology: Google, Instagram, WhatsApp ordering, billing, and more.\n\n` +
-    `Takes 3 minutes. A few quick questions so I can build the right proposal for you.\n\n` +
-    `*What's your restaurant or cafe called?*`
-  );
+
+  if (ctx) {
+    // ── Fast-track: user came from a specific service page ──
+    await setState(env.DB, from, {
+      step: 'asked_restaurant',
+      contact_name: name,
+      first_message: firstMsg,
+      source: ctx.source,
+      service_id: ctx.service_id,
+      service_name: ctx.service_name,
+      custom_notes: ctx.custom_notes,
+      monthly_hint: ctx.monthly,
+      fast_track: true,
+    });
+
+    await sendText(env, from,
+      `Hi${firstName ? ' ' + firstName : ''}! 👋\n\n` +
+      `I can see you're interested in *${ctx.service_name}*${ctx.monthly ? ` — ₹${ctx.monthly.toLocaleString('en-IN')}/month` : ''}.\n\n` +
+      `Let me build you a personalised proposal. Two quick questions.\n\n` +
+      `*What's your restaurant or cafe called?*`
+    );
+  } else {
+    // ── Normal flow: unknown service, run full discovery ──
+    await setState(env.DB, from, {
+      step: 'asked_restaurant',
+      contact_name: name,
+      first_message: firstMsg,
+      source: detectSource(firstMsg),
+    });
+
+    await sendText(env, from,
+      `Hi${firstName ? ' ' + firstName : ''}! 👋\n\n` +
+      `I'm from *SparkSol* — we help restaurants and cafes in Bangalore with technology: Google, Instagram, WhatsApp ordering, billing, and more.\n\n` +
+      `Takes 3 minutes. A few quick questions so I can build the right proposal for you.\n\n` +
+      `*What's your restaurant or cafe called?*`
+    );
+  }
 }
 
 async function handleRestaurant(env, from, name, state) {
@@ -218,21 +284,30 @@ async function handleRestaurant(env, from, name, state) {
 }
 
 async function handleLocation(env, from, location, state) {
-  await setState(env.DB, from, { ...state, step: 'asked_challenge', location });
+  const newState = { ...state, location };
 
-  await sendInteractiveList(env, from,
-    `What's your biggest challenge right now?`,
-    `Pick the one that's costing you the most. I'll show you exactly what we'd do for *${state.restaurant_name}*.`,
-    'See Options',
-    [{
-      title: 'Challenges',
-      rows: PAIN_POINTS.map(p => ({
-        id: `challenge_${p.id}`,
-        title: p.label.substring(0, 24),
-        description: p.desc.substring(0, 72),
-      }))
-    }]
-  );
+  if (state.fast_track && state.service_id) {
+    // ── Fast-track: service already known — skip challenge + service selection ──
+    await setState(env.DB, from, { ...newState, step: 'asked_custom' });
+    // Jump straight to cross-sell (customisation already captured via calculator notes)
+    await offerCrossSell(env, from, { ...newState, step: 'asked_custom' });
+  } else {
+    // ── Normal flow ──
+    await setState(env.DB, from, { ...newState, step: 'asked_challenge' });
+    await sendInteractiveList(env, from,
+      `What's your biggest challenge right now?`,
+      `Pick the one that's costing you the most. I'll show you exactly what we'd do for *${state.restaurant_name}*.`,
+      'See Options',
+      [{
+        title: 'Challenges',
+        rows: PAIN_POINTS.map(p => ({
+          id: `challenge_${p.id}`,
+          title: p.label.substring(0, 24),
+          description: p.desc.substring(0, 72),
+        }))
+      }]
+    );
+  }
 }
 
 async function handleChallenge(env, from, reply, state) {
@@ -465,6 +540,37 @@ async function handleSchedule(env, from, reply, state) {
     call_slot: slot,
     source: state.source,
   });
+}
+
+async function handleProposalFollowUp(env, from, reply, state) {
+  // User came via website form — proposal already sent, now they replied
+  // Could be a text reply OR a schedule button click
+
+  const scheduleLabels = {
+    schedule_morning: 'Morning (10 AM – 12 PM)',
+    schedule_afternoon: 'Afternoon (2 PM – 5 PM)',
+    schedule_evening: 'Evening (6 PM – 8 PM)',
+  };
+
+  if (scheduleLabels[reply]) {
+    // They clicked a call slot button
+    await handleSchedule(env, from, reply, state);
+    return;
+  }
+
+  // They sent a text — ask for call slot
+  await setState(env.DB, from, { ...state, step: 'proposal_sent' }); // keep in proposal_sent
+  await sendButtonMessage(env, from,
+    `Thanks for reaching out! 👋\n\n` +
+    `Your proposal for *${state.service_name || 'our services'}* is ready.\n` +
+    (state.proposal_url ? `👉 ${state.proposal_url}\n\n` : '\n') +
+    `When works best for a quick 15-minute call to walk through it?`,
+    [
+      { type: 'reply', reply: { id: 'schedule_morning', title: 'Morning (10-12)' } },
+      { type: 'reply', reply: { id: 'schedule_afternoon', title: 'Afternoon (2-5)' } },
+      { type: 'reply', reply: { id: 'schedule_evening', title: 'Evening (6-8)' } },
+    ]
+  );
 }
 
 async function handleExisting(env, from, msgText, state) {

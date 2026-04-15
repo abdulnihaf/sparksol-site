@@ -297,17 +297,13 @@ function renderCalc(containerId) {
       html += '</div>';
     }
 
-    // CTA: WhatsApp with exact plan details
-    var planDetails = data.name + ':\\n';
-    t.lines.forEach(function(l) {
-      planDetails += '• ' + l.label + ' — ' + fmt(l.price) + (l.pct > 0 ? ' (' + l.pct + '% discount)' : '') + '\\n';
-    });
-    planDetails += '\\nMonthly total: ' + fmt(t.monthly);
-    if (data.setup > 0) planDetails += '\\nSetup (one-time): ' + fmt(data.setup);
-    planDetails += '\\n\\nPlease send me the proposal PDF for this plan.';
-
-    var waMsg = encodeURIComponent("Hi, I'd like a proposal for my restaurant.\\n\\nPlan: " + planDetails);
-    html += '<a href="https://wa.me/919491478569?text=' + waMsg + '" style="display:block;text-align:center;background:#228B54;color:#fff;padding:16px;border-radius:8px;font-size:15px;font-weight:600;margin-top:16px;text-decoration:none;transition:all 0.2s">Get Proposal on WhatsApp →</a>';
+    // CTA: Structured SPARKSOL: context for smart bot fast-tracking
+    var serviceIdMap = { social: 'social_s2', google: 'google_g2', whatsapp: 'whatsapp_w2', photography: 'photo_ph1' };
+    var ctaServiceId = serviceIdMap[svc] || svc;
+    var customNotes = t.lines.map(function(l) { return l.label; }).join(', ');
+    if (customNotes) customNotes += ' @ ' + fmt(t.monthly) + '/mo';
+    var ctaText = 'SPARKSOL:s=' + ctaServiceId + '&m=' + t.monthly + '&n=' + encodeURIComponent(customNotes);
+    html += '<a href="https://wa.me/919491478569?text=' + encodeURIComponent(ctaText) + '" style="display:block;text-align:center;background:#228B54;color:#fff;padding:16px;border-radius:8px;font-size:15px;font-weight:600;margin-top:16px;text-decoration:none;transition:all 0.2s">Get Proposal on WhatsApp →</a>';
     html += '<div style="text-align:center;font-size:12px;color:#8E8E99;margin-top:8px">You\'ll receive a PDF proposal within minutes</div>';
 
     html += '</div>';
