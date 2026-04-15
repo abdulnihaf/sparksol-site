@@ -3,6 +3,7 @@
 // WABA: Sparksol | Phone: +91 94914 78569 | Phone ID: 1092313753959048
 
 const WA_API = 'https://graph.facebook.com/v21.0';
+const CATALOG_ID = '1463846368518886'; // SparkSol Services catalogue
 
 // ═══════════════════════════════════════════════════════════════
 // PAIN POINT → SERVICE MAPPING
