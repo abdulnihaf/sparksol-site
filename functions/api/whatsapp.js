@@ -1,8 +1,106 @@
-// SparkSol WhatsApp Enquiry Bot — Cloudflare Worker
-// Handles incoming WhatsApp messages, runs structured enquiry flow,
-// captures leads in D1, notifies team
+// SparkSol WhatsApp Bot v2 — Cloudflare Worker
+// Precision flow: restaurant → location → pain point → service → customisation → cross-sell → email → proposal → call scheduling
+// WABA: Sparksol | Phone: +91 94914 78569 | Phone ID: 1092313753959048
 
 const WA_API = 'https://graph.facebook.com/v21.0';
+
+// ═══════════════════════════════════════════════════════════════
+// PAIN POINT → SERVICE MAPPING
+// ═══════════════════════════════════════════════════════════════
+
+const PAIN_POINTS = [
+  {
+    id: 'online',
+    label: 'Get found on Google & Instagram',
+    desc: 'Customers search but can\'t find you',
+    services: [
+      { id: 'google_g1', name: 'Google Maps Listing', badge: 'Rs 4,999 one-time', desc: 'Show up when people search nearby' },
+      { id: 'google_g2', name: 'Google Presence Management', badge: 'Rs 7,999 + 4,999/mo', desc: 'Listing + reviews + weekly posts' },
+      { id: 'social_s1', name: 'Instagram + Facebook Setup', badge: 'Rs 2,499 one-time', desc: 'Professional social presence in 5 days' },
+    ]
+  },
+  {
+    id: 'commissions',
+    label: 'Cut Swiggy/Zomato commissions',
+    desc: 'Losing 20-25% on every order',
+    services: [
+      { id: 'whatsapp_w1', name: 'WhatsApp Ordering Bot', badge: 'Rs 14,999 + 1,999/mo', desc: 'Direct orders, 0% commission to platforms' },
+      { id: 'whatsapp_w2', name: 'WhatsApp Menu Catalog', badge: 'Rs 4,999 one-time', desc: 'Browsable menu inside WhatsApp' },
+    ]
+  },
+  {
+    id: 'social',
+    label: 'Fix inactive social media',
+    desc: 'Last post was months ago',
+    services: [
+      { id: 'social_s2', name: 'Social Media Posting Engine', badge: 'Rs 4,999 + 3,999/mo', desc: 'Daily posts without you doing anything' },
+      { id: 'social_s3', name: 'Reel Production', badge: 'Rs 14,999 per reel', desc: 'Professional food reels that get real views' },
+    ]
+  },
+  {
+    id: 'operations',
+    label: 'Fix billing, kitchen & cash',
+    desc: 'Orders get missed, cash doesn\'t match',
+    services: [
+      { id: 'pos_p1', name: 'POS + Billing System', badge: 'Rs 24,999 + 4,999/year', desc: 'Own your POS data, no monthly SaaS fees' },
+      { id: 'photo_ph1', name: 'Food Photography', badge: 'Rs 7,999 one-time', desc: 'Professional food photos for all platforms' },
+    ]
+  },
+  {
+    id: 'hiring',
+    label: 'Find good restaurant staff',
+    desc: 'Cooks, waiters, helpers — fast',
+    services: [
+      { id: 'hiring_h1', name: 'WhatsApp Hiring Campaign', badge: 'Rs 9,999 one-time', desc: 'Reach 5,000+ candidates in 48 hours' },
+    ]
+  },
+];
+
+// Which services ask customisation questions before generating proposal
+const CUSTOMISABLE = {
+  social_s2: {
+    question: '📅 How many posts per month do you need?',
+    options: [
+      { id: 'posts_20', title: '20 posts/month' },
+      { id: 'posts_30', title: '30 posts/month' },
+      { id: 'posts_custom', title: 'Discuss with team' },
+    ]
+  },
+  social_s3: {
+    question: '🎬 How many reels do you need?',
+    options: [
+      { id: 'reels_1', title: '1 reel' },
+      { id: 'reels_3', title: '3-reel pack' },
+      { id: 'reels_5', title: '5-reel pack' },
+    ]
+  },
+  whatsapp_w1: {
+    question: '📋 Roughly how many items are on your menu?',
+    options: [
+      { id: 'menu_small', title: 'Under 30 items' },
+      { id: 'menu_mid', title: '30-60 items' },
+      { id: 'menu_large', title: '60+ items' },
+    ]
+  },
+};
+
+// Cross-sell suggestions: primary service → what to offer next
+const CROSSSELLS = {
+  google_g1:   { id: 'photo_ph1',  name: 'Food Photography',        price: 'Rs 7,999', reason: 'Great photos make your Google listing convert 3x better' },
+  google_g2:   { id: 'social_s1',  name: 'Instagram + Facebook Setup', price: 'Rs 2,499', reason: 'Google drives discovery, Instagram builds trust' },
+  social_s1:   { id: 'social_s2',  name: 'Social Posting Engine',   price: 'Rs 3,999/mo', reason: 'Setup is step 1 — daily posting is where results come from' },
+  social_s2:   { id: 'social_s3',  name: 'Reel Production',         price: 'Rs 14,999', reason: 'Reels get 10x the reach of static posts' },
+  social_s3:   { id: 'photo_ph1',  name: 'Food Photography',        price: 'Rs 7,999', reason: 'Better source material = better reels' },
+  whatsapp_w1: { id: 'google_g1',  name: 'Google Maps Listing',     price: 'Rs 4,999', reason: 'Customers need to find you on Google before WhatsApp ordering' },
+  whatsapp_w2: { id: 'whatsapp_w1',name: 'WhatsApp Ordering Bot',   price: 'Rs 14,999', reason: 'Catalog shows menu — the bot handles orders and payment' },
+  pos_p1:      { id: 'google_g1',  name: 'Google Maps Listing',     price: 'Rs 4,999', reason: 'Operations handled internally + visibility externally = full package' },
+  photo_ph1:   { id: 'social_s2',  name: 'Social Posting Engine',   price: 'Rs 3,999/mo', reason: 'Great photos need consistent posting to reach people' },
+  hiring_h1:   { id: 'social_s1',  name: 'Instagram + Facebook Setup', price: 'Rs 2,499', reason: 'Job openings on social get 5x more candidate reach' },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN HANDLER
+// ═══════════════════════════════════════════════════════════════
 
 export async function onRequest(context) {
   const corsHeaders = {
@@ -40,179 +138,317 @@ export async function onRequest(context) {
     }
 
     const msg = value.messages[0];
-    const from = msg.from; // customer phone number
+    const from = msg.from;
     const msgType = msg.type;
-    const msgBody = msgType === 'text' ? msg.text?.body?.trim() : '';
+    const msgText = msgType === 'text' ? (msg.text?.body?.trim() || '') : '';
+    const interactiveReply = msg.interactive?.list_reply?.id || msg.interactive?.button_reply?.id || null;
     const contactName = value.contacts?.[0]?.profile?.name || '';
-    const timestamp = msg.timestamp;
 
-    // Get or create conversation state
-    const state = await getConversationState(env.DB, from);
+    // Mark as read
+    await sendWhatsApp(env, {
+      messaging_product: 'whatsapp',
+      status: 'read',
+      message_id: msg.id
+    });
 
-    // Process based on current state
-    let response;
+    const state = await getState(env.DB, from);
 
+    // Route to handler based on current step
     switch (state.step) {
       case 'new':
-        // First message — welcome + ask restaurant name
-        response = await handleNewLead(env, from, contactName, msgBody, state);
-        break;
+        await handleNew(env, from, contactName, msgText, state); break;
       case 'asked_restaurant':
-        // They replied with restaurant name
-        response = await handleRestaurantName(env, from, msgBody, state);
-        break;
+        await handleRestaurant(env, from, msgText, state); break;
       case 'asked_location':
-        // They replied with location
-        response = await handleLocation(env, from, msgBody, state);
-        break;
+        await handleLocation(env, from, msgText, state); break;
+      case 'asked_challenge':
+        await handleChallenge(env, from, interactiveReply || msgText, state); break;
       case 'asked_service':
-        // They selected a service (interactive list reply)
-        const interactiveReply = msg.interactive?.list_reply?.id || msg.interactive?.button_reply?.id || msgBody;
-        response = await handleServiceSelection(env, from, interactiveReply, state);
-        break;
+        await handleService(env, from, interactiveReply || msgText, state); break;
+      case 'asked_custom':
+        await handleCustom(env, from, interactiveReply || msgText, state); break;
+      case 'asked_crosssell':
+        await handleCrossSell(env, from, interactiveReply || msgText, state); break;
       case 'asked_email':
-        // They replied with email (or skip)
-        response = await handleEmail(env, from, msgBody, state);
-        break;
+        await handleEmail(env, from, msgText, state); break;
+      case 'asked_schedule':
+        await handleSchedule(env, from, interactiveReply || msgText, state); break;
       case 'complete':
-        // Lead already captured — pass to team
-        response = await handleExistingLead(env, from, msgBody, state);
-        break;
+        await handleExisting(env, from, msgText, state); break;
       default:
-        response = await handleNewLead(env, from, contactName, msgBody, state);
+        await handleNew(env, from, contactName, msgText, state);
     }
 
     return new Response('OK', { status: 200, headers: corsHeaders });
-
   } catch (err) {
     console.error('Webhook error:', err);
     return new Response('OK', { status: 200, headers: corsHeaders });
   }
 }
 
-// ============================================================
-// CONVERSATION HANDLERS
-// ============================================================
+// ═══════════════════════════════════════════════════════════════
+// STEP HANDLERS
+// ═══════════════════════════════════════════════════════════════
 
-async function handleNewLead(env, from, name, firstMsg, state) {
-  // Save initial state
-  await updateConversationState(env.DB, from, {
+async function handleNew(env, from, name, firstMsg, state) {
+  await setState(env.DB, from, {
     step: 'asked_restaurant',
     contact_name: name,
     first_message: firstMsg,
-    source: extractSource(firstMsg),
+    source: detectSource(firstMsg),
   });
 
-  // Send welcome + ask restaurant name
-  await sendTextMessage(env, from,
-    `Hi${name ? ' ' + name.split(' ')[0] : ''}! 👋 Welcome to SparkSol.\n\n` +
-    `We help restaurants in Bangalore with technology — Google, Instagram, WhatsApp ordering, billing, and more.\n\n` +
-    `Before I connect you with our team, a few quick questions so we can recommend the right plan.\n\n` +
+  const firstName = name ? name.split(' ')[0] : '';
+  await sendText(env, from,
+    `Hi${firstName ? ' ' + firstName : ''}! 👋\n\n` +
+    `I'm from *SparkSol* — we help restaurants and cafes in Bangalore with technology: Google, Instagram, WhatsApp ordering, billing, and more.\n\n` +
+    `Takes 3 minutes. A few quick questions so I can build the right proposal for you.\n\n` +
     `*What's your restaurant or cafe called?*`
   );
 }
 
-async function handleRestaurantName(env, from, restaurantName, state) {
-  await updateConversationState(env.DB, from, {
-    ...state,
-    step: 'asked_location',
-    restaurant_name: restaurantName,
-  });
+async function handleRestaurant(env, from, name, state) {
+  await setState(env.DB, from, { ...state, step: 'asked_location', restaurant_name: name });
 
-  await sendTextMessage(env, from,
-    `Great! *${restaurantName}* 🍽️\n\n` +
-    `*Where are you located in Bangalore?*\n` +
-    `(Area name — like Shivajinagar, Koramangala, Indiranagar)`
+  await sendText(env, from,
+    `*${name}* — nice! 🍽️\n\n` +
+    `*Where are you located?*\n_(Area name — like Koramangala, Shivajinagar, Indiranagar)_`
   );
 }
 
 async function handleLocation(env, from, location, state) {
-  await updateConversationState(env.DB, from, {
-    ...state,
-    step: 'asked_service',
-    location: location,
-  });
+  await setState(env.DB, from, { ...state, step: 'asked_challenge', location });
 
-  // Send interactive list for service selection
   await sendInteractiveList(env, from,
-    'What do you need help with?',
-    'Pick the area that matters most right now. Our team will recommend the specific plan on the call.',
+    `What's your biggest challenge right now?`,
+    `Pick the one that's costing you the most. I'll show you exactly what we'd do for *${state.restaurant_name}*.`,
     'See Options',
+    [{
+      title: 'Challenges',
+      rows: PAIN_POINTS.map(p => ({
+        id: `challenge_${p.id}`,
+        title: p.label.substring(0, 24),
+        description: p.desc.substring(0, 72),
+      }))
+    }]
+  );
+}
+
+async function handleChallenge(env, from, reply, state) {
+  // Strip "challenge_" prefix if present
+  const challengeId = reply.replace('challenge_', '');
+  const painPoint = PAIN_POINTS.find(p => p.id === challengeId);
+
+  if (!painPoint) {
+    // Unrecognised — re-prompt
+    await sendText(env, from, `Please pick one of the options from the list above. Tap the button to see them.`);
+    return;
+  }
+
+  await setState(env.DB, from, { ...state, step: 'asked_service', challenge_id: challengeId, challenge_label: painPoint.label });
+
+  if (painPoint.services.length === 1) {
+    // Only one service — skip selection, go direct
+    await handleService(env, from, painPoint.services[0].id, { ...state, step: 'asked_service', challenge_id: challengeId, challenge_label: painPoint.label });
+    return;
+  }
+
+  // Show services as button replies (max 3 buttons)
+  const serviceList = painPoint.services.slice(0, 3).map(s =>
+    `*${s.name}*\n${s.badge} — ${s.desc}`
+  ).join('\n\n');
+
+  const buttons = painPoint.services.slice(0, 3).map(s => ({
+    type: 'reply', reply: { id: s.id, title: s.name.substring(0, 20) }
+  }));
+
+  await sendButtonMessage(env, from,
+    `Here's what we offer for "${painPoint.label}":\n\n${serviceList}\n\n*Which one fits best for ${state.restaurant_name}?*`,
+    buttons
+  );
+}
+
+async function handleService(env, from, serviceId, state) {
+  // Find service name from pain points map
+  let serviceName = serviceId;
+  for (const pp of PAIN_POINTS) {
+    const s = pp.services.find(s => s.id === serviceId);
+    if (s) { serviceName = s.name; break; }
+  }
+
+  const newState = { ...state, step: 'asked_custom', service_id: serviceId, service_name: serviceName };
+  await setState(env.DB, from, newState);
+
+  // Check if this service has customisation questions
+  const customQ = CUSTOMISABLE[serviceId];
+  if (customQ) {
+    const buttons = customQ.options.map(o => ({
+      type: 'reply', reply: { id: o.id, title: o.title.substring(0, 20) }
+    }));
+    await sendButtonMessage(env, from,
+      `Good choice. *${serviceName}* for *${state.restaurant_name}* in *${state.location}*.\n\n${customQ.question}`,
+      buttons
+    );
+  } else {
+    // No customisation needed — go straight to cross-sell
+    await offerCrossSell(env, from, newState);
+  }
+}
+
+async function handleCustom(env, from, reply, state) {
+  // Map button IDs back to readable labels
+  const customLabels = {
+    posts_20: '20 posts/month', posts_30: '30 posts/month', posts_custom: 'Custom posting plan',
+    reels_1: '1 reel', reels_3: '3-reel pack', reels_5: '5-reel pack',
+    menu_small: 'Under 30 menu items', menu_mid: '30-60 menu items', menu_large: '60+ menu items',
+  };
+  const customNote = customLabels[reply] || reply;
+  const newState = { ...state, custom_notes: customNote };
+  await setState(env.DB, from, newState);
+
+  await offerCrossSell(env, from, newState);
+}
+
+async function offerCrossSell(env, from, state) {
+  await setState(env.DB, from, { ...state, step: 'asked_crosssell' });
+
+  const cross = CROSSSELLS[state.service_id];
+  if (!cross) {
+    // No cross-sell for this service — go straight to email
+    await askEmail(env, from, state);
+    return;
+  }
+
+  await sendButtonMessage(env, from,
+    `✅ *${state.service_name}* — noted.\n\n` +
+    `One more thing: restaurants that get *${state.service_name}* often also add *${cross.name}* (${cross.price}).\n\n` +
+    `💡 _${cross.reason}_\n\n` +
+    `Want me to include it in your proposal?`,
     [
-      {
-        title: 'Services',
-        rows: [
-          { id: 'marketing', title: 'Get More Customers', description: 'Google, Instagram, WhatsApp, Swiggy/Zomato' },
-          { id: 'operations', title: 'Run Better Operations', description: 'Billing, kitchen screens, cash, inventory' },
-          { id: 'hiring', title: 'Hire Staff', description: 'Find cooks, waiters, helpers fast' },
-          { id: 'photography', title: 'Photos & Design', description: 'Food photography, packaging, menu cards' },
-          { id: 'everything', title: 'Everything', description: 'I want it all handled' },
-          { id: 'not_sure', title: 'Not Sure Yet', description: 'Just exploring — tell me what you offer' },
-        ]
-      }
+      { type: 'reply', reply: { id: 'crosssell_yes', title: 'Yes, add it' } },
+      { type: 'reply', reply: { id: 'crosssell_no', title: 'No thanks' } },
     ]
   );
 }
 
-async function handleServiceSelection(env, from, selection, state) {
-  const serviceLabels = {
-    marketing: 'Get More Customers (Google, Instagram, WhatsApp)',
-    operations: 'Run Better Operations (Billing, Kitchen, Cash)',
-    hiring: 'Hire Staff',
-    photography: 'Photos & Design',
-    everything: 'Everything',
-    not_sure: 'Exploring options',
-  };
+async function handleCrossSell(env, from, reply, state) {
+  const cross = CROSSSELLS[state.service_id];
+  let addedService = null;
 
-  const interested = serviceLabels[selection] || selection;
+  if (reply === 'crosssell_yes' && cross) {
+    addedService = cross.id;
+    await setState(env.DB, from, { ...state, crosssell_id: cross.id, crosssell_name: cross.name });
+    await sendText(env, from, `Perfect! I'll include *${cross.name}* in your proposal too. 🎉`);
+  }
 
-  await updateConversationState(env.DB, from, {
-    ...state,
-    step: 'asked_email',
-    interested_in: interested,
-    interested_id: selection,
-  });
+  await askEmail(env, from, { ...state, crosssell_id: addedService });
+}
 
-  await sendTextMessage(env, from,
-    `Got it — *${interested}* for *${state.restaurant_name}* in *${state.location}*.\n\n` +
-    `Last question — *what's your email?*\n` +
-    `(We'll send the formal quote there. Type "skip" if you prefer WhatsApp only.)`
+async function askEmail(env, from, state) {
+  await setState(env.DB, from, { ...state, step: 'asked_email' });
+  await sendText(env, from,
+    `Almost done!\n\n*What's your email?*\nWe'll send the formal proposal there.\n\n_(Type "skip" if you prefer WhatsApp only)_`
   );
 }
 
 async function handleEmail(env, from, email, state) {
   const finalEmail = email.toLowerCase() === 'skip' ? null : email;
+  await setState(env.DB, from, { ...state, step: 'asked_schedule', email: finalEmail });
 
-  // Mark conversation complete
-  await updateConversationState(env.DB, from, {
-    ...state,
-    step: 'complete',
-    email: finalEmail,
-  });
-
-  // Create lead in D1
-  await createLead(env.DB, {
+  // Save lead to DB
+  await saveLead(env.DB, {
     restaurant_name: state.restaurant_name,
     contact_name: state.contact_name,
     phone: from,
     email: finalEmail,
     location: state.location,
-    interested_in: state.interested_in,
-    interested_id: state.interested_id,
-    source: state.source || 'whatsapp_direct',
+    interested_in: state.service_name,
+    interested_id: state.service_id,
+    source: state.source || 'waba_bot',
     first_message: state.first_message,
   });
 
-  // Confirm to customer
-  await sendTextMessage(env, from,
-    `✅ Perfect! Here's what I have:\n\n` +
-    `🍽️ *${state.restaurant_name}*\n` +
-    `📍 ${state.location}\n` +
-    `📋 ${state.interested_in}\n` +
-    (finalEmail ? `📧 ${finalEmail}\n` : '') +
-    `\nOur team will call you *within 4 hours* to discuss the right plan and pricing.\n\n` +
-    `In the meantime, you can see all our services and pricing at sparksol.in/pricing\n\n` +
-    `Talk soon! 🙏`
+  // Generate proposal via API
+  let proposalUrl = null;
+  let proposalId = null;
+  try {
+    const proposalRes = await fetch(`${env.SITE_URL}/api/proposal?action=create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        restaurantName: state.restaurant_name,
+        contactName: state.contact_name,
+        phone: from,
+        email: finalEmail,
+        location: state.location,
+        serviceId: state.service_id,
+        crosssellId: state.crosssell_id || null,
+        customNotes: state.custom_notes || '',
+        source: 'waba_bot',
+      })
+    });
+    const pd = await proposalRes.json();
+    if (pd.proposalId) {
+      proposalId = pd.proposalId;
+      proposalUrl = pd.proposalUrl;
+    }
+  } catch (e) {
+    console.error('Proposal generation failed:', e);
+  }
+
+  // Send proposal link
+  if (proposalUrl) {
+    await sendText(env, from,
+      `✅ Your personalised proposal is ready!\n\n` +
+      `📄 *${state.service_name}${state.crosssell_name ? ' + ' + state.crosssell_name : ''}*\n` +
+      `For: *${state.restaurant_name}*, ${state.location}\n\n` +
+      `👉 ${proposalUrl}\n\n` +
+      `_(Valid for 30 days | Ref: ${(proposalId || '').toUpperCase()})_`
+    );
+  } else {
+    await sendText(env, from,
+      `✅ Details received!\n\n` +
+      `*${state.restaurant_name}* | ${state.location}\n` +
+      `Service: *${state.service_name}*\n\n` +
+      `Our team will send you a detailed proposal within 2 hours.`
+    );
+  }
+
+  // Ask for call scheduling
+  await sendButtonMessage(env, from,
+    `When works best for a quick 15-minute call with our team? 📞`,
+    [
+      { type: 'reply', reply: { id: 'schedule_morning', title: 'Morning (10-12)' } },
+      { type: 'reply', reply: { id: 'schedule_afternoon', title: 'Afternoon (2-5)' } },
+      { type: 'reply', reply: { id: 'schedule_evening', title: 'Evening (6-8)' } },
+    ]
+  );
+}
+
+async function handleSchedule(env, from, reply, state) {
+  const scheduleLabels = {
+    schedule_morning: 'Morning (10 AM – 12 PM)',
+    schedule_afternoon: 'Afternoon (2 PM – 5 PM)',
+    schedule_evening: 'Evening (6 PM – 8 PM)',
+  };
+  const slot = scheduleLabels[reply] || reply;
+
+  await setState(env.DB, from, { ...state, step: 'complete', call_slot: slot });
+
+  // Update proposal call_scheduled_at
+  if (state.proposal_id) {
+    try {
+      await env.DB.prepare(
+        `UPDATE proposals SET call_scheduled_at = datetime('now'), status = 'call_scheduled' WHERE id = ?`
+      ).bind(state.proposal_id).run();
+    } catch (e) { /* ignore */ }
+  }
+
+  await sendText(env, from,
+    `✅ Confirmed! *${slot}*\n\n` +
+    `Nihaf from SparkSol will call you at *+${from}* during that window.\n\n` +
+    `If you have any questions before the call, just reply here.\n\n` +
+    `Looking forward to speaking with you! 🙏`
   );
 
   // Notify team
@@ -220,172 +456,167 @@ async function handleEmail(env, from, email, state) {
     restaurant_name: state.restaurant_name,
     contact_name: state.contact_name,
     phone: from,
-    email: finalEmail,
+    email: state.email,
     location: state.location,
-    interested_in: state.interested_in,
+    service_name: state.service_name,
+    crosssell_name: state.crosssell_name,
+    custom_notes: state.custom_notes,
+    call_slot: slot,
     source: state.source,
   });
 }
 
-async function handleExistingLead(env, from, msgBody, state) {
-  // Lead already captured — forward to team and acknowledge
-  await sendTextMessage(env, from,
+async function handleExisting(env, from, msgText, state) {
+  await sendText(env, from,
     `Thanks for the message! Our team has been notified and will get back to you shortly.\n\n` +
-    `If urgent, call us at +91 7010426808.`
+    `If urgent, call us at *+91 94914 78569*.`
   );
 
-  // Forward the message to team
   await notifyTeam(env, {
     restaurant_name: state.restaurant_name,
     phone: from,
-    follow_up_message: msgBody,
+    follow_up_message: msgText,
   });
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════════
 // WHATSAPP API HELPERS
-// ============================================================
+// ═══════════════════════════════════════════════════════════════
 
-async function sendTextMessage(env, to, text) {
-  await fetch(`${WA_API}/${env.WA_PHONE_ID}/messages`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      messaging_product: 'whatsapp',
-      to: to,
-      type: 'text',
-      text: { body: text }
-    })
+async function sendWhatsApp(env, payload) {
+  try {
+    const res = await fetch(`${WA_API}/${env.WA_PHONE_ID}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ messaging_product: 'whatsapp', ...payload })
+    });
+    return res;
+  } catch (e) {
+    console.error('WA send error:', e);
+  }
+}
+
+async function sendText(env, to, body) {
+  return sendWhatsApp(env, { to, type: 'text', text: { body, preview_url: false } });
+}
+
+async function sendButtonMessage(env, to, body, buttons) {
+  return sendWhatsApp(env, {
+    to, type: 'interactive',
+    interactive: {
+      type: 'button',
+      body: { text: body },
+      action: { buttons: buttons.slice(0, 3) }
+    }
   });
 }
 
 async function sendInteractiveList(env, to, header, body, buttonText, sections) {
-  await fetch(`${WA_API}/${env.WA_PHONE_ID}/messages`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.WA_ACCESS_TOKEN}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      messaging_product: 'whatsapp',
-      to: to,
-      type: 'interactive',
-      interactive: {
-        type: 'list',
-        header: { type: 'text', text: header },
-        body: { text: body },
-        action: {
-          button: buttonText,
-          sections: sections
-        }
-      }
-    })
+  return sendWhatsApp(env, {
+    to, type: 'interactive',
+    interactive: {
+      type: 'list',
+      header: { type: 'text', text: header },
+      body: { text: body },
+      action: { button: buttonText, sections }
+    }
   });
 }
 
 async function notifyTeam(env, lead) {
-  // Send to Nihaf's WhatsApp
   const teamPhone = '917010426808';
   let text;
 
   if (lead.follow_up_message) {
-    text = `📩 Follow-up from ${lead.restaurant_name || 'Lead'} (${lead.phone}):\n\n"${lead.follow_up_message}"`;
+    text = `📩 Follow-up from *${lead.restaurant_name || 'Lead'}* (+${lead.phone}):\n\n"${lead.follow_up_message}"`;
   } else {
-    text = `🔔 *New SparkSol Lead!*\n\n` +
+    text =
+      `🔔 *New SparkSol Lead!*\n\n` +
       `🍽️ *${lead.restaurant_name}*\n` +
       `👤 ${lead.contact_name || 'Unknown'}\n` +
-      `📍 ${lead.location}\n` +
+      `📍 ${lead.location || ''}\n` +
       `📱 +${lead.phone}\n` +
       (lead.email ? `📧 ${lead.email}\n` : '') +
-      `📋 ${lead.interested_in}\n` +
-      `🔗 Source: ${lead.source || 'direct'}\n\n` +
-      `⏰ Call within 4 hours!`;
+      `📋 *${lead.service_name}*${lead.crosssell_name ? ' + ' + lead.crosssell_name : ''}\n` +
+      (lead.custom_notes ? `🔧 ${lead.custom_notes}\n` : '') +
+      (lead.call_slot ? `📅 Call slot: *${lead.call_slot}*\n` : '') +
+      `🔗 Source: ${lead.source || 'waba_bot'}\n\n` +
+      (lead.call_slot ? `✅ CALL SCHEDULED — dial in the slot above!` : `⏰ Call within 4 hours!`);
   }
 
-  // Use NCH production number to send to team (since test number can only message test numbers)
-  // In production, this would use SparkSol's own WABA number
-  console.log('Team notification:', text);
+  // Notify via SparkSol WABA → Nihaf's personal number
+  await sendWhatsApp(env, {
+    to: teamPhone, type: 'text', text: { body: text }
+  });
 
-  // For now, also store notification in D1 so dashboard can show it
+  // Also store in D1 notifications table
   try {
     await env.DB.prepare(
-      'INSERT INTO notifications (type, content, created_at) VALUES (?, ?, datetime("now"))'
+      'INSERT INTO notifications (type, content, created_at) VALUES (?1, ?2, datetime("now"))'
     ).bind('new_lead', text).run();
-  } catch (e) {
-    // notifications table might not exist yet
-  }
+  } catch (e) { /* ignore */ }
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════════
 // CONVERSATION STATE (D1)
-// ============================================================
+// ═══════════════════════════════════════════════════════════════
 
-async function getConversationState(db, phone) {
+async function getState(db, phone) {
   try {
-    const result = await db.prepare(
-      'SELECT * FROM conversations WHERE phone = ? ORDER BY updated_at DESC LIMIT 1'
-    ).bind(phone).first();
-
-    if (result) {
-      return { ...result, ...JSON.parse(result.data || '{}') };
-    }
-  } catch (e) {
-    // Table might not exist
-  }
+    const row = await db.prepare('SELECT * FROM conversations WHERE phone = ?').bind(phone).first();
+    if (row) return { ...row, ...JSON.parse(row.data || '{}') };
+  } catch (e) { /* ignore */ }
   return { step: 'new' };
 }
 
-async function updateConversationState(db, phone, state) {
+async function setState(db, phone, state) {
   const data = JSON.stringify(state);
   try {
     await db.prepare(`
       INSERT INTO conversations (phone, step, data, updated_at)
-      VALUES (?, ?, ?, datetime('now'))
-      ON CONFLICT(phone) DO UPDATE SET step = ?, data = ?, updated_at = datetime('now')
-    `).bind(phone, state.step, data, state.step, data).run();
+      VALUES (?1, ?2, ?3, datetime('now'))
+      ON CONFLICT(phone) DO UPDATE SET step = ?2, data = ?3, updated_at = datetime('now')
+    `).bind(phone, state.step, data).run();
   } catch (e) {
-    console.error('State update error:', e);
+    console.error('setState error:', e);
   }
 }
 
-async function createLead(db, lead) {
+async function saveLead(db, lead) {
   try {
     await db.prepare(`
-      INSERT INTO leads (restaurant_name, contact_name, phone, email, location, interested_in, interested_id, source, first_message, status, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', datetime('now'), datetime('now'))
+      INSERT INTO leads
+        (restaurant_name, contact_name, phone, email, location, interested_in, interested_id, source, first_message, status, created_at, updated_at)
+      VALUES
+        (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, 'new', datetime('now'), datetime('now'))
+      ON CONFLICT(phone) DO UPDATE SET
+        restaurant_name = ?1, contact_name = ?2, email = ?4, location = ?5,
+        interested_in = ?6, interested_id = ?7, updated_at = datetime('now')
     `).bind(
       lead.restaurant_name, lead.contact_name, lead.phone, lead.email,
       lead.location, lead.interested_in, lead.interested_id, lead.source, lead.first_message
     ).run();
   } catch (e) {
-    console.error('Lead creation error:', e);
+    console.error('saveLead error:', e);
   }
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════════════════════
 // HELPERS
-// ============================================================
+// ═══════════════════════════════════════════════════════════════
 
-function extractSource(msg) {
-  if (!msg) return 'whatsapp_direct';
-  const lower = msg.toLowerCase();
-  if (lower.includes('starter pack')) return 'website_starter_pack';
-  if (lower.includes('growth pack')) return 'website_growth_pack';
-  if (lower.includes('operations pack')) return 'website_operations_pack';
-  if (lower.includes('all-in-one')) return 'website_all_in_one';
-  if (lower.includes('social media')) return 'website_social_media';
-  if (lower.includes('google')) return 'website_google';
-  if (lower.includes('whatsapp ordering')) return 'website_whatsapp';
-  if (lower.includes('billing')) return 'website_pos';
-  if (lower.includes('kitchen')) return 'website_kds';
-  if (lower.includes('settlement')) return 'website_settlement';
-  if (lower.includes('inventory')) return 'website_inventory';
-  if (lower.includes('hiring')) return 'website_hiring';
-  if (lower.includes('photography')) return 'website_photography';
-  if (lower.includes('design')) return 'website_design';
-  if (lower.includes('sparksol')) return 'website_general';
-  return 'whatsapp_direct';
+function detectSource(msg) {
+  if (!msg) return 'waba_bot';
+  const m = msg.toLowerCase();
+  if (m.includes('google') || m.includes('maps')) return 'website_google';
+  if (m.includes('instagram') || m.includes('social')) return 'website_social';
+  if (m.includes('whatsapp ordering')) return 'website_whatsapp';
+  if (m.includes('billing') || m.includes('pos')) return 'website_pos';
+  if (m.includes('hiring') || m.includes('staff')) return 'website_hiring';
+  if (m.includes('photography') || m.includes('photos')) return 'website_photography';
+  if (m.includes('pricing') || m.includes('pack') || m.includes('sparksol')) return 'website_pricing';
+  return 'waba_bot';
 }
