@@ -6,10 +6,16 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 WHATSAPP_NUMBER = "917010426808"
 SITE_URL = "https://sparksol.in"
-WA_PHONE_ID = "1028681576998270"
+WA_PHONE_ID = "1092313753959048"
+
+# SparkSol WABA (created Apr 2026)
+# WABA Account: Sparksol | WABA ID: 1460647112230193
+# Phone: +91 94914 78569 | Phone Number ID: 1092313753959048
+# Owned by: HN Hotels Private Limited (Business Portfolio)
+# Status: Approved + Verified
 
 # Secrets (set via: wrangler pages secret put <NAME>)
-# WA_ACCESS_TOKEN       — NCH WABA system user token (works with test number)
+# WA_ACCESS_TOKEN       — SparkSol WABA system user token
 # WA_VERIFY_TOKEN       — Webhook verification token
 # DASHBOARD_KEY         — Admin API key for lead dashboard
 

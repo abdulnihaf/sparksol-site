@@ -307,7 +307,7 @@ function renderCalc(containerId) {
     planDetails += '\\n\\nPlease send me the proposal PDF for this plan.';
 
     var waMsg = encodeURIComponent("Hi, I'd like a proposal for my restaurant.\\n\\nPlan: " + planDetails);
-    html += '<a href="https://wa.me/15559090227?text=' + waMsg + '" style="display:block;text-align:center;background:#228B54;color:#fff;padding:16px;border-radius:8px;font-size:15px;font-weight:600;margin-top:16px;text-decoration:none;transition:all 0.2s">Get Proposal on WhatsApp →</a>';
+    html += '<a href="https://wa.me/919491478569?text=' + waMsg + '" style="display:block;text-align:center;background:#228B54;color:#fff;padding:16px;border-radius:8px;font-size:15px;font-weight:600;margin-top:16px;text-decoration:none;transition:all 0.2s">Get Proposal on WhatsApp →</a>';
     html += '<div style="text-align:center;font-size:12px;color:#8E8E99;margin-top:8px">You\'ll receive a PDF proposal within minutes</div>';
 
     html += '</div>';

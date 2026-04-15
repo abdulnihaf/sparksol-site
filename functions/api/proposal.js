@@ -357,7 +357,7 @@ function renderProposalHTML(p) {
   const weHandle = service.weHandle || [];
   const problemHeadline = service.problemHeadline || '';
   const problemLines = service.problemLines || [];
-  const waLink = `https://wa.me/917010426808?text=${encodeURIComponent(`Hi, I've reviewed proposal ${p.id.toUpperCase()} for ${p.restaurant_name} (${p.service_name}). I'd like to schedule a call.`)}`;
+  const waLink = `https://wa.me/919491478569?text=${encodeURIComponent(`Hi, I've reviewed proposal ${p.id.toUpperCase()} for ${p.restaurant_name} (${p.service_name}). I'd like to schedule a call.`)}`;
 
   return `<!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
