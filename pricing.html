@@ -552,14 +552,15 @@ async function submitProposal() {
         if (data.success) {
             // Show success state
             const phoneClean = phone.replace(/\D/g, '').replace(/^(\d{10})$/, '91$1');
+            const waPreFill = encodeURIComponent('Hi, I just submitted a proposal request for ' + restaurant + '. Proposal ref: ' + (data.id || '').toUpperCase());
             document.getElementById('formContent').innerHTML = `
                 <div class="success-state">
                     <div class="check">✓</div>
-                    <h3>Proposal sent!</h3>
+                    <h3>Proposal ready!</h3>
                     <p>Personalized for <strong>${restaurant}</strong><br>
-                    Check your WhatsApp — we've sent the proposal to your number.</p>
+                    View it below, or open WhatsApp — we'll send you the link directly.</p>
                     <a href="${data.url}" target="_blank" style="margin-bottom:10px">View Your Proposal &rarr;</a>
-                    <a href="https://wa.me/919491478569" target="_blank" style="display:inline-block;background:#228B54;color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin-top:4px">Open WhatsApp Chat &rarr;</a>
+                    <a href="https://wa.me/919491478569?text=${waPreFill}" target="_blank" style="display:inline-block;background:#228B54;color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin-top:4px">Open WhatsApp Chat &rarr;</a>
                 </div>
             `;
         } else {
