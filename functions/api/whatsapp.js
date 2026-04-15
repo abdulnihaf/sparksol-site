@@ -24,7 +24,12 @@ const SERVICE_NAMES = {
   photo_ph1: 'AI Food Photography',
   photo_ph2: 'Real Menu Shoot',
   design_ds1: 'Packaging Design',
+  design_ds3: 'Full Brand Suite',
   hiring_h1: 'WhatsApp Hiring Campaign',
+  pack_m1: 'Digital Starter Pack',
+  pack_m2: 'Growth Pack',
+  pack_m3: 'Operations Pack',
+  pack_m4: 'All-In-One Pack',
 };
 
 // Parse structured website context: "SPARKSOL:s=whatsapp_w1&m=14999&n=4+campaigns"

@@ -298,7 +298,7 @@ function renderCalc(containerId) {
     }
 
     // CTA: Structured SPARKSOL: context for smart bot fast-tracking
-    var serviceIdMap = { social: 'social_s2', google: 'google_g2', whatsapp: 'whatsapp_w2', photography: 'photo_ph1' };
+    var serviceIdMap = { social: 'social_s2', google: 'google_g2', whatsapp: 'whatsapp_w2', photography: 'photo_ph1', design: 'design_ds1' };
     var ctaServiceId = serviceIdMap[svc] || svc;
     var customNotes = t.lines.map(function(l) { return l.label; }).join(', ');
     if (customNotes) customNotes += ' @ ' + fmt(t.monthly) + '/mo';

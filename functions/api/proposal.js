@@ -153,6 +153,24 @@ const SERVICES = {
     steps: [['Discovery call', '45 minutes — restaurant, menu, brand, priorities.'], ['Phase 1: Foundation (Week 1-2)', 'Google, social, photos, WhatsApp catalog — built simultaneously.'], ['Phase 2: Activation (Week 2-3)', 'Website, delivery platforms, ordering system live.'], ['Phase 3: Ongoing', 'Daily posting, weekly Google posts, review management, monthly reporting.']],
     theyProvide: ['Menu + prices', '1 hour for discovery', 'Page access + Razorpay account'], weHandle: ['Every single thing — setup, content, posting, ordering, reviews, reporting'],
     suggests: [] },
+
+  pack_m3: { name: 'Operations Pack', category: 'packs', setup: 125000, monthly: 0, amc: 39999, timeline: '20-25 working days', paymentLabel: 'One-time + annual support',
+    problemHeadline: "Running on guesswork? This makes your restaurant run itself.",
+    problemLines: ["No real billing system, cash doesn't match sales, kitchen misses orders, and you have no idea if yesterday was actually profitable.", "The Operations Pack gives you a self-hosted billing system, kitchen display, cash settlement, inventory tracking, and a daily profit dashboard — all connected, all owned by you."],
+    deliverables: ['Self-hosted POS + billing system', 'Kitchen Display System (KDS)', 'Cash settlement & platform reconciliation', 'Inventory + purchasing module', 'Daily profit dashboard (owner view)'],
+    exclusions: ['Marketing (social, Google, WhatsApp)', 'Staff hiring', 'Hardware (TVs, tablets, printers)'],
+    steps: [['Assessment call', 'We audit your current system: billing, cash flow, inventory. 30 minutes.'], ['Hardware finalized', 'We recommend exact specs — you buy, we configure.'], ['Installation (2 days on-site)', 'POS + KDS + dashboard set up at your restaurant.'], ['Training', '3-hour staff training session. Manager walkthrough.'], ['Go-live + 30-day support', 'We\'re on call for a month. Annual AMC keeps it running.']],
+    theyProvide: ['Hardware purchase', '2 days for on-site install', 'Staff availability for training'], weHandle: ['Software setup, configuration, training, annual maintenance'],
+    suggests: ['google_g1', 'whatsapp_w2'] },
+
+  pack_m4: { name: 'All-In-One Pack', category: 'packs', setup: 220000, monthly: 14999, amc: 39999, timeline: '30 working days', paymentLabel: 'Monthly retainer + annual support',
+    problemHeadline: "You shouldn\'t have to manage your restaurant and market it.",
+    problemLines: ["Growth Pack handles marketing. Operations Pack handles the back-end. But when they're separate, nothing talks to each other — you still have to figure out which orders are profitable, which platforms are worth it, where your staff is underperforming.", "The All-In-One Pack is everything — marketing, operations, staff hub, and WhatsApp customer tracking — managed by one team. You just run the food."],
+    deliverables: ['Everything in Growth Pack (Google + Social + WhatsApp + Platforms + Website)', 'Everything in Operations Pack (POS + KDS + Settlement + Inventory + Dashboard)', 'Staff management hub', 'WhatsApp customer tracking + repeat order campaigns'],
+    exclusions: ['Hardware (TVs, tablets, printers)', 'Paid ad spend'],
+    steps: [['Discovery call (1 hour)', 'Marketing + operations audit. Priorities set.'], ['Phase 1: Operations (Week 1-2)', 'POS, KDS, settlement, inventory — installed and live.'], ['Phase 2: Marketing (Week 2-3)', 'Google, social, WhatsApp, platforms — all activated.'], ['Phase 3: Unification (Week 3-4)', 'Dashboard connects both sides. Staff hub live.'], ['Ongoing', 'Daily posting, monthly reporting, WhatsApp campaigns, annual AMC.']],
+    theyProvide: ['Hardware purchase', '1 hour for discovery', 'Page access + Razorpay account', 'Staff availability for training'], weHandle: ['Everything — setup, content, posting, ordering, operations, maintenance, reporting'],
+    suggests: [] },
 };
 
 
